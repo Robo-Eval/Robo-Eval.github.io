@@ -1,12 +1,13 @@
+
 <!DOCTYPE html>
 <html>
 
 <head>
   <meta charset="utf-8">
-  <meta name="description" content="Taskverse">
+  <meta name="description" content="RoboEval">
   <meta name="keywords" content="Benchmarking, Bimanual Manipulation, Robotics">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Taskverse: Where Robotic Manipulation Meets Structured and Scalable Evaluation</title>
+  <title>RoboEval: Where Robotic Manipulation Meets Structured and Scalable Evaluation</title>
 
 
   <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
@@ -43,6 +44,31 @@
     th {
       background-color: #b2b2c8;
     }
+
+    .author-block {
+      display: inline-block;
+      margin: 0 10px 10px 0;
+    }
+
+    .author-block a {
+      color: #3273dc;
+      text-decoration: none;
+    }
+
+    .author-block a:hover {
+      text-decoration: underline;
+    }
+
+    .author-affiliations {
+      margin-top: 15px;
+      font-size: 0.9em;
+      color: #666;
+    }
+
+    .affiliation-block {
+      display: inline-block;
+      margin: 0 15px 5px 0;
+    }
   </style>
 
 
@@ -58,11 +84,37 @@
         <div class="columns is-centered">
           <div class="column has-text-centered">
 
-            <h1 class="title is-1 publication-title"> <img src="./media/taskverse_icon.png" width="30%" height="30%" />
+            <h1 class="title is-1 publication-title"> <img src="./media/RoboEval_icon.png" width="30%" height="30%" />
               Where Robotic Manipulation Meets Structured and Scalable Evaluation </h1>
 
             <div class="is-size-5 publication-authors">
-              <span class="author-block"> Anonymous Submission </span>
+              <span class="author-block">
+                <a href="https://example.com/author1">John Smith</a><sup>1</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://example.com/author2">Jane Doe</a><sup>1,2</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://example.com/author3">Alex Johnson</a><sup>2</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://example.com/author4">Sarah Wilson</a><sup>1</sup>,
+              </span>
+              <span class="author-block">
+                <a href="https://example.com/author5">Michael Brown</a><sup>3</sup>
+              </span>
+            </div>
+
+            <div class="is-size-6 author-affiliations">
+              <span class="affiliation-block">
+                <sup>1</sup>University of Example
+              </span>
+              <span class="affiliation-block">
+                <sup>2</sup>Example Research Institute
+              </span>
+              <span class="affiliation-block">
+                <sup>3</sup>Example Tech Company
+              </span>
             </div>
 
           </div>
@@ -80,7 +132,7 @@
           <div class="content has-text-justified">
 
             <video id="teaser_box" autoplay muted controls loop width="100%">
-              <source src="./media/taskverse.mp4" type="video/mp4" />
+              <source src="./media/RoboEval.mp4" type="video/mp4" />
             </video>
           </div>
         </div>
@@ -97,9 +149,9 @@
           <h2 class="title is-3">Abstract</h2>
           <div class="content has-text-justified">
             <p>
-              We present <b>TASKVERSE</b>, a simulation benchmark and structured evaluation framework for bimanual
+              We present <b>RoboEval</b>, a simulation benchmark and structured evaluation framework for bimanual
               robotic
-              manipulation. Unlike existing benchmarks that evaluate policies solely based on task success, TASKVERSE
+              manipulation. Unlike existing benchmarks that evaluate policies solely based on task success, RoboEval
               introduces
               an initial suite of tiered, semantically diverse manipulation tasks with fine-grained diagnostic metrics
               to probe the
@@ -107,13 +159,13 @@
               that target
               specific skills such as coordination, precision, and interaction under variability, and are decomposed
               into variations
-              that focus on spatial and physical variability. Alongside sparse rewards, TASKVERSE includes high-quality
+              that focus on spatial and physical variability. Alongside sparse rewards, RoboEval includes high-quality
               human
               demonstrations to support data-driven learning. Our evaluation shows that aggregate success rates often
               conceal critical
-              skill deficiencies, and that TASKVERSE enables nuanced, stagewise insights into policy behavior. By
+              skill deficiencies, and that RoboEval enables nuanced, stagewise insights into policy behavior. By
               systematically
-              characterizing when, where, and why policies fail, TASKVERSE provides a new foundation for developing
+              characterizing when, where, and why policies fail, RoboEval provides a new foundation for developing
               and
               evaluating generalizable robotic agents.
             </p>
@@ -201,12 +253,13 @@
               <br />
 
 
-              <h3 class="title is-4">Taskverse Benchmark</h3>
+
+              <h3 class="title is-4">RoboEval Benchmark</h3>
 
 
               <div class="content has-text-justified">
                 <p>
-                  TASKVERSE is a benchmark for evaluating bimanual manipulation policies under diverse task settings.
+                  RoboEval is a benchmark for evaluating bimanual manipulation policies under diverse task settings.
                   The first
                   iteration consists of 10 base tasks and 3000+ human demonstrations. The tasks are derived from common
                   tasks that humans
@@ -221,7 +274,7 @@
                   along with fine-grained evaluation metrics such as trajectory smoothness, environment collisions, etc.
                 </p>
 
-                <img src="./media/taskverse_overview.png" />
+                <img src="./media/RoboEval_overview.png" />
 
                 <h3 class="title is-4">Base Task Set in RobotArena</h3>
 
