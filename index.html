@@ -216,41 +216,22 @@
     </div>
   </section>
 
-
-  <section class="section">
-    <div class="container is-max-desktop">
-      <!-- Abstract. -->
-      <div class="columns is-centered has-text-centered">
-        <div class="column is-four-fifths">
-          <h2 class="title is-3">Abstract</h2>
-          <div class="content has-text-justified">
-            <p>
-              We present <b>RoboEval</b>, a simulation benchmark and structured evaluation framework for bimanual
-              robotic
-              manipulation. Unlike existing benchmarks that evaluate policies solely based on task success, RoboEval
-              introduces
-              an initial suite of tiered, semantically diverse manipulation tasks with fine-grained diagnostic metrics
-              to probe the
-              capabilities and failure modes of learning-based agents. The benchmark provides an initial set of tasks
-              that target
-              specific skills such as coordination, precision, and interaction under variability, and are decomposed
-              into variations
-              that focus on spatial and physical variability. Alongside sparse rewards, RoboEval includes high-quality
-              human
-              demonstrations to support data-driven learning. Our evaluation shows that aggregate success rates often
-              conceal critical
-              skill deficiencies, and that RoboEval enables nuanced, stagewise insights into policy behavior. By
-              systematically
-              characterizing when, where, and why policies fail, RoboEval provides a new foundation for developing
-              and
-              evaluating generalizable robotic agents.
-            </p>
-          </div>
+<section class="section">
+  <div class="container is-max-desktop">
+    <!-- Abstract -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            We present <b>RoboEval</b>, a simulation benchmark and structured evaluation framework designed to reveal the limitations of current bimanual manipulation policies. While prior benchmarks report only binary task success, we show that such metrics often conceal critical weaknesses in policy behavior—such as poor coordination, slipping during grasping, or asymmetric arm usage. ROBOEVAL introduces a suite of tiered, semantically grounded tasks decomposed into skill-specific stages, with variations that systematically challenge spatial, physical, and coordination capabilities. Tasks are paired with fine-grained diagnostic metrics and 3&nbsp;000+ human demonstrations to support imitation learning. Our experiments reveal that policies with similar success rates diverge in how tasks are executed—some struggle with alignment, others with temporally consistent bimanual control. We find that behavioral metrics correlate with success in over half of task-metric pairs and remain informative even when binary success saturates. By pinpointing when and how policies fail, ROBOEVAL enables a deeper, more actionable understanding of robotic manipulation—and highlights the need for evaluation tools that go beyond success alone.
+          </p>
         </div>
       </div>
-      <!--/ Abstract. -->
     </div>
-  </section>
+  </div>
+</section>
+
 
 
   <section class="section">
