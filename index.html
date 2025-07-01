@@ -684,11 +684,92 @@
     </div>
   </section>
 
+<script>
+  /* ------------- CONFIG ------------- */
+  const plotMap = {
+    "lift_pot": ["metrics", "static", "orientation", "position_orientation"],
+    "rotate_valve": ["metrics", "position", "position_orientation", "obstacle"],
+    "cube_handover": ["metrics", "static", "orientation", "vertical", "position"],
+    "stack_single_book_shelf": ["metrics", "static", "position", "position_orientation"],
+    "stack_two_blocks": ["metrics", "static", "orientation", "position"],
+    "lift_tray": ["metrics", "position", "orientation", "position_orientation", "drag"],
+    "pack_box": ["metrics", "rotation", "position", "position_orientation"],
+    "pick_single_book_from_table": ["metrics", "static", "orientation", "position_orientation"]
+  };
+
+  /* -------- helper: map metric names just for the radial plot -------- */
+  function radialMetricName(metric) {
+    switch (metric) {
+      case "orientation":          return "rotation";
+      case "position_orientation": return "combined";
+      /* static, position, rotation, etc. stay unchanged */
+      default:                     return metric;
+    }
+  }
+
+  /* ---------------- UI population ---------------- */
+  function populateFailureDropdowns() {
+    const taskSelect = document.getElementById("failure-task-select");
+    taskSelect.innerHTML = '';
+
+    for (const task in plotMap) {
+      const opt = document.createElement("option");
+      opt.value = task;
+      opt.text  = task.replaceAll("_", " ").replace(/\b\w/g, l => l.toLowerCase());
+      taskSelect.appendChild(opt);
+    }
+    updateMetricOptions();   // populate second dropdown + first images
+  }
+
+  function updateMetricOptions() {
+    const task         = document.getElementById("failure-task-select").value;
+    const metricSelect = document.getElementById("failure-metric-select");
+
+    metricSelect.innerHTML = '';
+    plotMap[task].forEach(metric => {
+      const opt = document.createElement("option");
+      opt.value = metric;
+      opt.text  = metric === "metrics"
+                    ? "base"
+                    : metric.replaceAll("_", " ").toLowerCase();
+      metricSelect.appendChild(opt);
+    });
+
+    updateFailurePlots();    // refresh images whenever options change
+  }
+
+  /* ---------------- image swapping ---------------- */
+  function updateFailurePlots() {
+    const task   = document.getElementById("failure-task-select").value;
+    const metric = document.getElementById("failure-metric-select").value;
+
+    /* suffix for FAILURE plot keeps the original name */
+    const failureSuffix = metric === "metrics" ? "" : `_${metric}`;
+
+    /* suffix for RADIAL plot uses the mapped name */
+    const radialSuffix  = metric === "metrics"
+                            ? ""
+                            : `_${radialMetricName(metric)}`;
+
+    const radialPath  = `./media/radial_graph/${task}${radialSuffix}_metrics.png`;
+    const failurePath = `./media/failure_summary_plots/${task}${failureSuffix}_metrics_summary.png`;
+
+    document.getElementById("radial-plot").src  = radialPath;
+    document.getElementById("failure-plot").src = failurePath;
+  }
+
+  /* ---------------- event wiring ---------------- */
+  document.getElementById("failure-task-select")
+          .addEventListener("change", updateMetricOptions);
+  document.getElementById("failure-metric-select")
+          .addEventListener("change", updateFailurePlots);
+
+  window.addEventListener("DOMContentLoaded", populateFailureDropdowns);
+</script>
 
 
 
-
-  <script>
+<!--   <script>
     const plotMap = {
       "lift_pot": ["metrics", "static", "orientation", "position_orientation"],
       "rotate_valve": ["metrics", "position", "position_orientation", "obstacle"],
@@ -746,7 +827,7 @@
     document.getElementById("failure-metric-select").addEventListener("change", updateFailurePlots);
 
     window.addEventListener("DOMContentLoaded", populateFailureDropdowns);
-  </script>
+  </script> -->
 
 
   <section class="section">
