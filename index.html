@@ -23,6 +23,7 @@
   <script src="./static/js/bulma-carousel.min.js"></script>
   <script src="./static/js/bulma-slider.min.js"></script>
   <script src="./static/js/index.js"></script>
+  <script defer src="./static/js/leaderboard.js"></script>
 
 
 
@@ -190,7 +191,7 @@
                 </a>
               </span>
               <span class="link-block">
-                <a href="#" class="link-button">
+                <a href="#leaderboard" class="link-button">
                   <i class="fas fa-trophy"></i>
                   Leaderboard
                 </a>
@@ -586,6 +587,36 @@
 
 
 
+
+
+  <section class="section" id="leaderboard">
+    <div class="container is-max-widescreen">
+      <h2 class="title is-3">Leaderboard</h2>
+      <p>
+        Sort models by any metric. Default sorting follows the best direction for each metric
+        (<strong>higher</strong> for upward-arrow metrics, <strong>lower</strong> for downward-arrow metrics).
+      </p>
+
+      <div class="columns is-vcentered mb-4 mt-3">
+        <div class="column is-one-quarter">
+          <label class="label" for="leaderboard-scope-select">View</label>
+          <div class="select is-fullwidth">
+            <select id="leaderboard-scope-select"></select>
+          </div>
+        </div>
+        <div class="column">
+          <p class="is-size-7 has-text-grey" id="leaderboard-hint"></p>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="table is-fullwidth is-striped is-hoverable is-size-7" id="leaderboard-table">
+          <thead id="leaderboard-head"></thead>
+          <tbody id="leaderboard-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 
 
   <section class="section">
