@@ -101,6 +101,101 @@
       margin-right: 8px;
       font-size: 1.1em;
     }
+
+    /* ---- Task rollout collage ---- */
+    .rollout-collage {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .rollout-tile {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 4px solid #c8c8d0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      background: #000;
+    }
+
+    .rollout-tile video {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      height: auto;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .rollout-tile.is-success {
+      border-color: #27ae60;
+    }
+
+    .rollout-tile.is-failure {
+      border-color: #c0392b;
+    }
+
+    /* translucent colour wash reinforcing the outcome */
+    .rollout-tile.is-success::after,
+    .rollout-tile.is-failure::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .rollout-tile.is-success::after {
+      background: rgba(39, 174, 96, 0.12);
+    }
+
+    .rollout-tile.is-failure::after {
+      background: rgba(192, 57, 43, 0.12);
+    }
+
+    .rollout-badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      z-index: 2;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+      padding: 2px 9px;
+      border-radius: 999px;
+      letter-spacing: 0.02em;
+    }
+
+    .rollout-tile.is-success .rollout-badge {
+      background: #27ae60;
+    }
+
+    .rollout-tile.is-failure .rollout-badge {
+      background: #c0392b;
+    }
+
+    .rollout-tile.is-unknown .rollout-badge {
+      background: #7a7a85;
+    }
+
+    .rollout-eplabel {
+      position: absolute;
+      bottom: 8px;
+      right: 8px;
+      z-index: 2;
+      font-size: 0.68rem;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.55);
+      padding: 1px 8px;
+      border-radius: 6px;
+    }
+
+    .rollout-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      color: #888;
+      padding: 30px 0;
+    }
   </style>
 
 
@@ -187,13 +282,13 @@
               <span class="link-block">
                 <a href="https://github.com/Robo-Eval/RoboEval" class="link-button">
                   <i class="fab fa-github"></i>
-                  Code
+                  &nbsp;Code
                 </a>
               </span>
               <span class="link-block">
                 <a href="#leaderboard" class="link-button">
                   <i class="fas fa-trophy"></i>
-                  Leaderboard
+                  &nbsp;Leaderboard
                 </a>
               </span>
             </div>
@@ -527,45 +622,33 @@
         <h2 class="title is-3">Simulation Results</h2>
         <h3 class="title is-4">Task rollouts</h3>
 
-        <div class="columns">
+        <div class="content has-text-justified">
+          <p>
+            Select a task, variation, and method to view a collage of episode rollouts. Each tile is an
+            independent evaluation episode: a <span style="color:#27ae60; font-weight:700;">green</span> border
+            marks a <strong>successful</strong> episode and a <span style="color:#c0392b; font-weight:700;">red</span>
+            border marks a <strong>failure</strong>.
+          </p>
+        </div>
+
+        <div class="columns is-vcentered is-mobile is-multiline">
           <div class="column has-text-centered">
             Task
             <div class="select is-small">
-              <select id="single-menu-tasks" onchange="updateSingleVideo()">
-              </select>
+              <select id="rollout-task"></select>
             </div>
-            with variation
+            variation
             <div class="select is-small">
-              <select id="single-menu-variations" onchange="updateSingleVideo()"></select>
+              <select id="rollout-variation"></select>
             </div>
-            and method
+            method
             <div class="select is-small">
-              <select id="single-menu-method" onchange="updateSingleVideo()">
-                <option value="bc" selected>Behavior Cloning</option>
-                <option value="act">ACT</option>
-                <option value="diffusion">Diffusion Policy</option>
-                <option value="openvla">OpenVLA</option>
-              </select>
+              <select id="rollout-method"></select>
             </div>
-            episode
-            <div class="select is-small">
-              <select id="single-menu-instances" onchange="updateSingleVideo()">
-                <option value="0">01</option>
-                <option value="1">02</option>
-                <option value="2">03</option>
-                <option value="3">04</option>
-                <option value="4" selected>05</option>
-              </select>
-            </div>
-            <br />
-          <br />
-
-            <video id="single-task-result-video" muted autoplay playsinline loop width="640px">
-              <source src="#" type="video/mp4">
-            </video>
           </div>
-
         </div>
+
+        <div id="rollout-collage" class="rollout-collage"></div>
 
 
       <div class="container is-max-widescreen">
@@ -729,114 +812,177 @@
   </footer>
 </body>
 <script>
-  let videoData = {};
-  const allMethods = {
-    bc: "Behavior Cloning",
-    act: "ACT",
-    diffusion: "Diffusion Policy",
-    openvla: "OpenVLA"
-  };
+  let rolloutData = { tasks: {}, methodOrder: [], methodLabels: {} };
 
-  async function loadVideoData() {
+  async function initRollouts() {
     try {
-      const response = await fetch("static/data/video_data.json");
-      videoData = await response.json();
-
-      const taskMenu = document.getElementById("single-menu-tasks");
-      taskMenu.innerHTML = "";
-
-      for (const task in videoData) {
-        const option = document.createElement("option");
-        option.value = task;
-        option.text = task.replaceAll("_", " ").replace(/\b\w/g, l => l.toUpperCase());
-        taskMenu.appendChild(option);
-      }
-
-      populateVariations();
+      const response = await fetch("static/data/rollouts.json");
+      rolloutData = await response.json();
     } catch (err) {
-      console.error("Failed to load video data:", err);
-    }
-  }
-
-  function populateVariations() {
-    const task = document.getElementById("single-menu-tasks").value;
-    const variationMenu = document.getElementById("single-menu-variations");
-    variationMenu.innerHTML = "";
-
-    const variations = videoData[task];
-    if (!variations) return;
-
-    for (const variation in variations) {
-      const option = document.createElement("option");
-      option.value = variation;
-      option.text = variation === "base" ? "(base)" : variation.replaceAll("_", " ");
-      variationMenu.appendChild(option);
-    }
-
-    variationMenu.options[0].selected = true;
-    populateMethods();
-  }
-
-  function populateMethods() {
-    const task = document.getElementById("single-menu-tasks").value;
-    const variation = document.getElementById("single-menu-variations").value;
-    const methodMenu = document.getElementById("single-menu-method");
-    methodMenu.innerHTML = "";
-
-    const availableMethods = videoData?.[task]?.[variation] || {};
-
-    let firstEnabled = null;
-
-    for (const key in allMethods) {
-      const option = document.createElement("option");
-      option.value = key;
-      option.text = allMethods[key];
-
-      if (key in availableMethods) {
-        option.disabled = false;
-        if (!firstEnabled) firstEnabled = option;
-      } else {
-        option.disabled = true;
-      }
-
-      methodMenu.appendChild(option);
-    }
-
-    if (firstEnabled) {
-      firstEnabled.selected = true;
-    }
-
-    methodMenu.disabled = false;
-    updateSingleVideo();
-  }
-
-  function updateSingleVideo() {
-    const task = document.getElementById("single-menu-tasks").value;
-    const variation = document.getElementById("single-menu-variations").value;
-    const method = document.getElementById("single-menu-method").value;
-    const index = parseInt(document.getElementById("single-menu-instances").value, 10);
-
-    const methodData = videoData?.[task]?.[variation]?.[method];
-    if (!methodData || !methodData.length) {
-      document.getElementById("single-task-result-video").pause();
+      console.error("Failed to load rollout data:", err);
       return;
     }
 
-    const selectedVideo = methodData[index % methodData.length];
-    const variationSuffix = variation === "base" ? "" : `_${variation}`;
-    const path = `media/simulation/${task}${variationSuffix}/${method}/${selectedVideo}`;
+    const taskSel = document.getElementById("rollout-task");
+    taskSel.innerHTML = "";
+    for (const taskKey in rolloutData.tasks) {
+      const option = document.createElement("option");
+      option.value = taskKey;
+      option.text = rolloutData.tasks[taskKey].label;
+      taskSel.appendChild(option);
+    }
 
-    const video = document.getElementById("single-task-result-video");
-    video.querySelector("source").src = path;
-    video.load();
+    taskSel.addEventListener("change", populateRolloutVariations);
+    document.getElementById("rollout-variation").addEventListener("change", populateRolloutMethods);
+    document.getElementById("rollout-method").addEventListener("change", renderCollage);
+
+    populateRolloutVariations();
   }
 
-  document.getElementById("single-menu-tasks").addEventListener("change", populateVariations);
-  document.getElementById("single-menu-variations").addEventListener("change", populateMethods);
-  document.getElementById("single-menu-method").addEventListener("change", updateSingleVideo);
-  document.getElementById("single-menu-instances").addEventListener("change", updateSingleVideo);
+  function populateRolloutVariations() {
+    const taskKey = document.getElementById("rollout-task").value;
+    const varSel = document.getElementById("rollout-variation");
+    const prev = varSel.value;
+    varSel.innerHTML = "";
 
-  window.onload = loadVideoData;
+    const variations = rolloutData.tasks?.[taskKey]?.variations || {};
+    for (const varKey in variations) {
+      const option = document.createElement("option");
+      option.value = varKey;
+      option.text = variations[varKey].label;
+      varSel.appendChild(option);
+    }
+
+    if (prev && variations[prev]) varSel.value = prev;
+    populateRolloutMethods();
+  }
+
+  function populateRolloutMethods() {
+    const taskKey = document.getElementById("rollout-task").value;
+    const varKey = document.getElementById("rollout-variation").value;
+    const methodSel = document.getElementById("rollout-method");
+    const prev = methodSel.value;
+    methodSel.innerHTML = "";
+
+    const available = rolloutData.tasks?.[taskKey]?.variations?.[varKey]?.methods || {};
+    let firstEnabled = null;
+
+    for (const methodKey of rolloutData.methodOrder) {
+      const option = document.createElement("option");
+      option.value = methodKey;
+      option.text = rolloutData.methodLabels[methodKey] || methodKey;
+      if (methodKey in available) {
+        option.disabled = false;
+        if (!firstEnabled) firstEnabled = methodKey;
+      } else {
+        option.disabled = true;
+      }
+      methodSel.appendChild(option);
+    }
+
+    if (prev && prev in available) methodSel.value = prev;
+    else if (firstEnabled) methodSel.value = firstEnabled;
+
+    renderCollage();
+  }
+
+  // Lazy-load + autoplay only the tiles near the viewport. This keeps the
+  // number of simultaneous downloads/decodes low, which matters a lot when the
+  // site is viewed over a slow SSH tunnel.
+  let rolloutObserver = null;
+
+  function ensureRolloutObserver() {
+    if (rolloutObserver || typeof IntersectionObserver === "undefined") return;
+    rolloutObserver = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const video = entry.target;
+          if (entry.isIntersecting) {
+            if (!video.src && video.dataset.src) {
+              video.src = video.dataset.src;
+            }
+            const p = video.play();
+            if (p && p.catch) p.catch(() => {});
+          } else {
+            video.pause();
+          }
+        }
+      },
+      { rootMargin: "300px 0px", threshold: 0.1 }
+    );
+  }
+
+  function startVideo(video) {
+    if (!video.src && video.dataset.src) video.src = video.dataset.src;
+    const p = video.play();
+    if (p && p.catch) p.catch(() => {});
+  }
+
+  function renderCollage() {
+    const taskKey = document.getElementById("rollout-task").value;
+    const varKey = document.getElementById("rollout-variation").value;
+    const method = document.getElementById("rollout-method").value;
+    const container = document.getElementById("rollout-collage");
+
+    if (rolloutObserver) rolloutObserver.disconnect();
+    container.innerHTML = "";
+
+    const episodes =
+      rolloutData.tasks?.[taskKey]?.variations?.[varKey]?.methods?.[method] || [];
+
+    if (!episodes.length) {
+      const empty = document.createElement("div");
+      empty.className = "rollout-empty";
+      empty.textContent = "No rollouts available for this selection.";
+      container.appendChild(empty);
+      return;
+    }
+
+    ensureRolloutObserver();
+
+    episodes.forEach((ep, idx) => {
+      const tile = document.createElement("div");
+      tile.className =
+        "rollout-tile " +
+        (ep.success === true ? "is-success" : ep.success === false ? "is-failure" : "is-unknown");
+
+      const video = document.createElement("video");
+      video.dataset.src = ep.file;
+      video.muted = true;
+      video.defaultMuted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.setAttribute("muted", "");
+      video.setAttribute("playsinline", "");
+      video.preload = "none";
+      // Retry play once enough data is buffered (helps over slow links).
+      video.addEventListener("loadeddata", () => startVideo(video));
+      video.addEventListener("canplay", () => startVideo(video));
+
+      const badge = document.createElement("span");
+      badge.className = "rollout-badge";
+      badge.textContent =
+        ep.success === true ? "\u2713 Success" : ep.success === false ? "\u2717 Failure" : "Unknown";
+
+      const label = document.createElement("span");
+      label.className = "rollout-eplabel";
+      label.textContent = "Ep " + String((ep.episode ?? 0) + 1).padStart(2, "0");
+
+      tile.appendChild(video);
+      tile.appendChild(badge);
+      tile.appendChild(label);
+      container.appendChild(tile);
+
+      if (rolloutObserver) {
+        rolloutObserver.observe(video);
+      } else {
+        // No IntersectionObserver support: just load+play everything.
+        startVideo(video);
+      }
+    });
+  }
+
+  window.onload = initRollouts;
 </script>
 
 
