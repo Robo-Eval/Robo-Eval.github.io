@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+    content="RoboEval Diagnostic Bimanual Challenge — Track 2 of the CoRL 2026 Embodied AI Benchmark and Sim-to-Real Challenge Suite.">
+  <meta name="keywords" content="RoboEval, CoRL 2026, Challenge, Bimanual Manipulation, Benchmark, Robot Learning">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>CoRL 2026 RoboEval Diagnostic Bimanual Challenge</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/challenge.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script defer src="./static/js/challenge.js"></script>
+</head>
+
+<body>
+
+  <!-- ======================= Shared site navigation ======================= -->
+  <nav class="navbar re-navbar is-fixed-top" role="navigation" aria-label="main navigation">
+    <div class="container is-max-widescreen">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="./index.html">
+          <img src="./media/e.png" alt="RoboEval" />
+        </a>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="reNavMenu">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="reNavMenu" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" data-nav="home" href="./index.html">Home</a>
+
+          <div class="navbar-item has-dropdown is-hoverable" data-nav="challenge">
+            <a class="navbar-link" href="./challenge.html">
+              <span class="re-nav-trophy">&#127942;</span>CoRL 2026 Challenge
+            </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="./challenge.html">Challenge Overview</a>
+              <a class="navbar-item" href="./challenge.html#dates">Important Dates</a>
+              <a class="navbar-item" href="./challenge.html#tasks">Tasks &amp; Data</a>
+              <a class="navbar-item" href="./challenge.html#getting-started">Getting Started</a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item" href="./challenge-rules.html">Evaluation &amp; Rules</a>
+              <a class="navbar-item" href="./challenge-submission.html">Submission Guidelines</a>
+              <a class="navbar-item" href="./index.html#leaderboard">Leaderboard</a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item re-nav-ext" href="https://corl2026-realworld-robot-learning.github.io/#challenges" target="_blank" rel="noopener">Workshop Website</a>
+            </div>
+          </div>
+
+          <div class="navbar-item has-dropdown is-hoverable" data-nav="docs">
+            <a class="navbar-link" href="./challenge-rules.html">Documentation</a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="./challenge-rules.html#metrics">Metrics Reference</a>
+              <a class="navbar-item" href="./challenge-rules.html#protocol">Evaluation Protocol</a>
+              <a class="navbar-item" href="./challenge-submission.html#format">Submission Format</a>
+              <a class="navbar-item" href="./challenge-submission.html#faq">FAQ</a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item re-nav-ext" href="https://robo-eval.github.io/RoboEval-Documentation/" target="_blank" rel="noopener">RoboEval Docs</a>
+            </div>
+          </div>
+
+          <a class="navbar-item" data-nav="leaderboard" href="./index.html#leaderboard">Leaderboard</a>
+        </div>
+
+        <div class="navbar-end">
+          <a class="navbar-item" href="https://arxiv.org/pdf/2507.00435" target="_blank" rel="noopener">
+            <span class="icon is-small mr-1"><i class="ai ai-arxiv"></i></span> Paper
+          </a>
+          <a class="navbar-item" href="https://github.com/Robo-Eval/RoboEval" target="_blank" rel="noopener">
+            <span class="icon is-small mr-1"><i class="fab fa-github"></i></span> Code
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============================== Hero ============================== -->
+  <header class="re-page-hero">
+    <div class="container is-max-widescreen">
+      <span class="re-eyebrow">CoRL 2026 &middot; Challenge Suite &middot; Track 2</span>
+      <h1 class="re-page-title">RoboEval Diagnostic Bimanual Challenge</h1>
+      <p class="re-page-lede">
+        Binary success rates hide <em>how</em> a bimanual policy fails. This challenge asks you to build policies that
+        are not just successful but <strong>well-behaved</strong> — coordinated, efficient, safe, and robust to spatial
+        variation — and scores them with stage-level diagnostics rather than a single pass/fail bit.
+      </p>
+
+      <div class="re-cta-row">
+        <a class="re-btn" href="#getting-started">
+          <span class="icon is-small"><i class="fas fa-rocket"></i></span> Get Started
+        </a>
+        <a class="re-btn is-ghost" href="./challenge-rules.html">
+          <span class="icon is-small"><i class="fas fa-balance-scale"></i></span> Evaluation &amp; Rules
+        </a>
+        <a class="re-btn is-ghost" href="./challenge-submission.html">
+          <span class="icon is-small"><i class="fas fa-paper-plane"></i></span> Submission Guidelines
+        </a>
+        <a class="re-btn is-ghost" href="https://github.com/Robo-Eval/RoboEval" target="_blank" rel="noopener">
+          <span class="icon is-small"><i class="fab fa-github"></i></span> Code
+        </a>
+      </div>
+
+      <p class="mt-5 is-size-7 has-text-grey">
+        Part of the <a href="https://corl2026-realworld-robot-learning.github.io/#challenges" target="_blank"
+          rel="noopener">CoRL 2026 Embodied AI Benchmark and Sim-to-Real Challenge Suite</a>, hosted at the workshop
+        <em>From GPU-Accelerated Simulation to Scalable and Generalizable Real Robot Policy Learning</em> &mdash;
+        November 12, 2026, Austin, Texas, USA.
+      </p>
+    </div>
+  </header>
+
+  <!-- ========================= At a glance ========================= -->
+  <section class="section">
+    <div class="container is-max-widescreen">
+      <div class="columns is-variable is-6">
+
+        <div class="column is-7">
+          <div class="re-section-label">
+            <span class="re-num">01</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="overview">Challenge at a Glance</h2>
+          </div>
+
+          <table class="re-spec">
+            <tbody>
+              <tr>
+                <th>Track</th>
+                <td>Track 2 of 3 &mdash; Diagnostic Bimanual Manipulation</td>
+              </tr>
+              <tr>
+                <th>Simulator</th>
+                <td>MuJoCo, bimanual Franka Panda</td>
+              </tr>
+              <tr>
+                <th>Tasks</th>
+                <td>8 task families &mdash; 28 variations spanning position, rotation, and combined spatial shifts</td>
+              </tr>
+              <tr>
+                <th>Demonstrations</th>
+                <td>3,000+ human demonstrations collected via VR and keyboard teleoperation</td>
+              </tr>
+              <tr>
+                <th>Scored on</th>
+                <td>Outcome, Efficiency, Bimanual Coordination, Safety &amp; Stability &mdash; 14 metrics total</td>
+              </tr>
+              <tr>
+                <th>What you submit</th>
+                <td>Policy checkpoint, evaluation logs, and a short technical report</td>
+              </tr>
+              <tr>
+                <th>Baselines</th>
+                <td>ACT, Diffusion Policy, GR00T (see the <a href="./index.html#leaderboard">leaderboard</a>)</td>
+              </tr>
+              <tr>
+                <th>License</th>
+                <td>MIT &mdash; benchmark, assets, and demonstrations are free to use</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="column is-5">
+          <div class="re-section-label">
+            <span class="re-num">02</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="dates">Important Dates</h2>
+          </div>
+
+          <!-- TODO(organizers): replace the TBA entries below with confirmed dates. -->
+          <ul class="re-timeline">
+            <li>
+              <span class="re-tl-date"><span class="re-tba">TBA</span></span>
+              <span class="re-tl-what">Challenge launch &mdash; benchmark, demonstrations, and baselines released</span>
+            </li>
+            <li>
+              <span class="re-tl-date"><span class="re-tba">TBA</span></span>
+              <span class="re-tl-what">Leaderboard opens for submissions</span>
+            </li>
+            <li>
+              <span class="re-tl-date"><span class="re-tba">TBA</span></span>
+              <span class="re-tl-what">Submission deadline &mdash; checkpoints, logs, and reports due</span>
+            </li>
+            <li class="is-live">
+              <span class="re-tl-date">November 9, 2026</span>
+              <span class="re-tl-what">Winners announced</span>
+            </li>
+            <li class="is-live">
+              <span class="re-tl-date">November 12, 2026</span>
+              <span class="re-tl-what">Workshop presentation &mdash; CoRL 2026, Austin, Texas</span>
+            </li>
+          </ul>
+
+          <div class="re-callout mt-5">
+            <p class="re-callout-title">Dates subject to change</p>
+            <p class="is-size-7">
+              Launch and submission dates are being finalized with the workshop organizers. Watch the
+              <a href="https://github.com/Robo-Eval/RoboEval" target="_blank" rel="noopener">RoboEval repository</a>
+              or the <a href="https://corl2026-realworld-robot-learning.github.io/#challenges" target="_blank"
+                rel="noopener">workshop site</a> for announcements.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ Prizes ============================ -->
+  <section class="section pt-0">
+    <div class="container is-max-widescreen">
+      <div class="re-section-label">
+        <span class="re-num">03</span>
+        <h2 class="title is-4 mb-0 re-anchor" id="prizes">Prizes &amp; Awards</h2>
+      </div>
+
+      <p class="mb-5">
+        Prize amounts, compute credits, and travel grants for this track are being finalized with our sponsors.
+        Award categories are listed below; winners present their approach at the workshop on November 12, 2026.
+      </p>
+
+      <!-- TODO(organizers): replace each "TBA" with the confirmed amount once sponsorship is settled. -->
+      <div class="columns is-variable is-4">
+        <div class="column">
+          <div class="re-prize is-first">
+            <div class="re-prize-rank">&#129351; First Place</div>
+            <div class="re-prize-amount"><span class="re-tba">TBA</span></div>
+            <div class="re-prize-note">Best overall diagnostic score across all task families</div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="re-prize">
+            <div class="re-prize-rank">&#129352; Second Place</div>
+            <div class="re-prize-amount"><span class="re-tba">TBA</span></div>
+            <div class="re-prize-note">Runner-up on the aggregate leaderboard</div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="re-prize">
+            <div class="re-prize-rank">&#129353; Third Place</div>
+            <div class="re-prize-amount"><span class="re-tba">TBA</span></div>
+            <div class="re-prize-note">Third on the aggregate leaderboard</div>
+          </div>
+        </div>
+        <div class="column">
+          <div class="re-prize">
+            <div class="re-prize-rank">&#11088; Best Coordination</div>
+            <div class="re-prize-amount"><span class="re-tba">TBA</span></div>
+            <div class="re-prize-note">Strongest bimanual coordination and safety profile, independent of rank</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="re-callout mt-5">
+        <p class="re-callout-title">Open-source bonus</p>
+        <p>
+          Entries that release training code and checkpoints under a permissive license are eligible for an additional
+          open-source award and are highlighted on the public leaderboard. We strongly encourage reproducible
+          submissions &mdash; the point of a diagnostic benchmark is that others can build on what you learned.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================== Why this challenge ====================== -->
+  <section class="section pt-0">
+    <div class="container is-max-widescreen">
+      <div class="re-section-label">
+        <span class="re-num">04</span>
+        <h2 class="title is-4 mb-0 re-anchor" id="why">Why This Challenge Is Different</h2>
+      </div>
+
+      <p class="mb-5">
+        In our study, policies with <strong>nearly identical success rates diverged sharply in how they executed the
+        same task</strong> &mdash; some lost alignment, others lost temporally consistent bimanual control. Behavioral
+        metrics correlated with success in over half of all task&ndash;metric pairs, and stayed informative even where
+        binary success saturated. This challenge is built around that finding.
+      </p>
+
+      <div class="columns is-multiline is-variable is-4">
+        <div class="column is-half-tablet is-one-quarter-desktop">
+          <div class="re-feature">
+            <span class="re-feature-icon"><i class="fas fa-layer-group"></i></span>
+            <h4>Stage-level diagnosis</h4>
+            <p>Every task decomposes into skill-specific stages, so a failure is localized to <em>where</em> it happened
+              — not just recorded as a zero.</p>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-quarter-desktop">
+          <div class="re-feature">
+            <span class="re-feature-icon"><i class="fas fa-arrows-alt"></i></span>
+            <h4>Systematic variation</h4>
+            <p>Each task family ships position, rotation, and combined variants that probe spatial generalization
+              rather than memorization of a fixed scene.</p>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-quarter-desktop">
+          <div class="re-feature">
+            <span class="re-feature-icon"><i class="fas fa-puzzle-piece"></i></span>
+            <h4>Coordination is scored</h4>
+            <p>Arm velocity mismatch and gripper height offset are first-class metrics, so genuinely bimanual behavior
+              is rewarded over two arms acting independently.</p>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-quarter-desktop">
+          <div class="re-feature">
+            <span class="re-feature-icon"><i class="fas fa-shield-alt"></i></span>
+            <h4>Safety counts</h4>
+            <p>Collisions, slips, and jerk are measured throughout. A policy that succeeds by flailing through the
+              scene will not win.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================= Tasks & data ========================= -->
+  <section class="section pt-0">
+    <div class="container is-max-widescreen">
+      <div class="re-section-label">
+        <span class="re-num">05</span>
+        <h2 class="title is-4 mb-0 re-anchor" id="tasks">Tasks &amp; Data</h2>
+      </div>
+
+      <p class="mb-4">
+        The challenge uses the RoboEval task suite: everyday bimanual activities drawn from service, warehouse, and
+        industrial settings, each paired with expert demonstrations and stage annotations. Every task family is
+        evaluated across its variations.
+      </p>
+
+      <div class="table-container">
+        <table class="re-table">
+          <thead>
+            <tr>
+              <th>Task Family</th>
+              <th>Variations</th>
+              <th># Demos</th>
+              <th>Traj. Len</th>
+              <th>Skills</th>
+              <th>Coordination Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Lift Tray</td><td>Static, Pos, Rot, PR</td><td>543</td><td>67.6</td>
+              <td>grasp, lift</td><td>Tight Sym.</td>
+            </tr>
+            <tr>
+              <td>Stack Two Cubes</td><td>Static, Pos, Rot, PR</td><td>492</td><td>107.0</td>
+              <td>grasp, hold, place</td><td>Loosely Coord.</td>
+            </tr>
+            <tr>
+              <td>Stack Single Book Shelf</td><td>Static, Pos, PR</td><td>202</td><td>172.3</td>
+              <td>push, grasp, lift, place</td><td>Loosely Coord.</td>
+            </tr>
+            <tr>
+              <td>Cube Handover</td><td>Static, Pos, Rot, PR</td><td>408</td><td>93.5</td>
+              <td>grasp, hold</td><td>Loosely Coord.</td>
+            </tr>
+            <tr>
+              <td>Lift Pot</td><td>Static, Pos, Rot, PR</td><td>176</td><td>53.2</td>
+              <td>grasp, lift</td><td>Tight Sym.</td>
+            </tr>
+            <tr>
+              <td>Pack Box</td><td>Static, Pos, Rot, PR</td><td>394</td><td>133.2</td>
+              <td>push</td><td>Uncoord.</td>
+            </tr>
+            <tr>
+              <td>Pick Book From Table</td><td>Static, Pos, Rot, PR</td><td>366</td><td>106.0</td>
+              <td>grasp, lift</td><td>Loosely Coord.</td>
+            </tr>
+            <tr>
+              <td>Rotate Valve</td><td>Static, Pos, PR</td><td>349</td><td>119.6</td>
+              <td>grasp, rotate along axis</td><td>Uncoord.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p class="is-size-7 has-text-grey mt-2">
+        <strong>Pos</strong> = position-only variation &middot; <strong>Rot</strong> = orientation-only variation
+        &middot; <strong>PR</strong> = combined position and rotation. Trajectory length is the mean demonstration
+        length in seconds.
+      </p>
+
+      <div class="columns is-variable is-5 mt-5">
+        <div class="column is-half">
+          <h3 class="title is-5">Demonstration data</h3>
+          <p>
+            Over 3,000 human demonstrations are provided, collected through VR teleoperation on an Oculus Quest and
+            through keyboard teleoperation. Each demonstration includes RGB and depth observations, point clouds,
+            joint positions, object poses, and stage annotations. You may use all of it, a subset, or none of it.
+          </p>
+        </div>
+        <div class="column is-half">
+          <h3 class="title is-5">Observation &amp; action interface</h3>
+          <p>
+            Policies interact through the standard RoboEval interface. Action modes cover joint position
+            (absolute or delta) and end-effector Cartesian control, at a configurable control frequency.
+            Observation modes range from full (RGB, depth, point clouds) to lightweight (joint positions, object
+            poses).
+          </p>
+        </div>
+      </div>
+
+      <div class="has-text-centered mt-4">
+        <a class="re-btn is-ghost" href="./index.html#leaderboard">
+          <span class="icon is-small"><i class="fas fa-trophy"></i></span> See baseline results on the leaderboard
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================== Metrics ========================== -->
+  <section class="section pt-0">
+    <div class="container is-max-widescreen">
+      <div class="re-section-label">
+        <span class="re-num">06</span>
+        <h2 class="title is-4 mb-0 re-anchor" id="metrics-summary">How You Are Scored</h2>
+      </div>
+
+      <p class="mb-5">
+        Submissions are ranked on four metric families. Each is reported per task, per variation, and aggregated
+        across the suite. Full definitions, units, and aggregation rules are in the
+        <a href="./challenge-rules.html#metrics">Metrics Reference</a>.
+      </p>
+
+      <div class="columns is-multiline is-variable is-4">
+        <div class="column is-half-tablet is-one-quarter-desktop">
+          <div class="re-feature">
+            <span class="re-feature-icon"><i class="fas fa-cube"></i></span>
+            <h4>Outcome</h4>
+            <ul>
+              <li>Success (SR)</li>
+              <li>Task Progression (TP)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-quarter-desktop">
+          <div class="re-feature">
+            <span class="re-feature-icon"><i class="fas fa-chart-line"></i></span>
+            <h4>Efficiency</h4>
+            <ul>
+              <li>Cartesian Path Length (CPL)</li>
+              <li>Joint Path Length (JPL)</li>
+              <li>Orientation Path Length (OPL)</li>
+              <li>Completion Time (CT)</li>
+              <li>Trajectory Length (TL)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-quarter-desktop">
+          <div class="re-feature">
+            <span class="re-feature-icon"><i class="fas fa-puzzle-piece"></i></span>
+            <h4>Coordination</h4>
+            <ul>
+              <li>Bimanual Arm Velocity Difference (BAVD)</li>
+              <li>Bimanual Gripper Vertical Difference (BGVD)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="column is-half-tablet is-one-quarter-desktop">
+          <div class="re-feature">
+            <span class="re-feature-icon"><i class="fas fa-shield-alt"></i></span>
+            <h4>Safety &amp; Stability</h4>
+            <ul>
+              <li>Self Collision Count (SCC)</li>
+              <li>Environment Collision Count (ECC)</li>
+              <li>Slip Count (SC)</li>
+              <li>Mean Joint Jerk (MJJ)</li>
+              <li>Mean Cartesian Jerk (MCJ)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= Getting started ======================= -->
+  <section class="section pt-0">
+    <div class="container is-max-widescreen">
+      <div class="re-section-label">
+        <span class="re-num">07</span>
+        <h2 class="title is-4 mb-0 re-anchor" id="getting-started">Getting Started</h2>
+      </div>
+
+      <div class="columns is-variable is-6">
+        <div class="column is-7">
+          <ol class="re-steps">
+            <li>
+              <strong>Install RoboEval</strong>
+              Clone the repository with submodules and install into a clean Python 3.10 environment.
+              <pre class="re-code"><code>git clone --recurse-submodules git@github.com:Robo-Eval/RoboEval.git
+cd RoboEval
+
+conda create -n roboeval python=3.10
+conda activate roboeval
+
+pip install -e ".[examples]"</code></pre>
+            </li>
+            <li>
+              <strong>Verify the installation</strong>
+              Replay a bundled demonstration to confirm the simulator and assets load correctly.
+              <pre class="re-code"><code>python examples/1_data_replay.py</code></pre>
+            </li>
+            <li>
+              <strong>Explore the tasks and data</strong>
+              Instantiate an environment and inspect the observation and action interface.
+              <pre class="re-code"><code>from roboeval.envs.lift_pot import LiftPotPositionAndOrientation
+from roboeval.action_modes import JointPositionActionMode
+from roboeval.robots.configs.panda import BimanualPanda
+
+env = LiftPotPositionAndOrientation(
+    action_mode=JointPositionActionMode(absolute=True, ee=False),
+    render_mode="human",
+    control_frequency=20,
+    robot_cls=BimanualPanda,
+)</code></pre>
+            </li>
+            <li>
+              <strong>Train your policy</strong>
+              Use the provided demonstrations, your own data, or any pretraining you like. See the
+              <a href="./challenge-rules.html#rules">rules</a> for what is and is not permitted.
+            </li>
+            <li>
+              <strong>Run the evaluation harness</strong>
+              Produce the metrics file that your submission is scored from.
+              <pre class="re-code"><code>python examples/5_gather_metrics.py</code></pre>
+            </li>
+            <li>
+              <strong>Submit</strong>
+              Package your checkpoint, <code class="re-inline-code">results.json</code>, and technical report, then
+              submit the link. Full instructions are on the
+              <a href="./challenge-submission.html">Submission Guidelines</a> page.
+            </li>
+          </ol>
+        </div>
+
+        <div class="column is-5">
+          <div class="re-toc">
+            <p class="has-text-weight-bold">Documentation</p>
+            <ol>
+              <li><a href="./challenge-rules.html#protocol">Evaluation protocol</a> &mdash; episodes, seeds, budgets</li>
+              <li><a href="./challenge-rules.html#metrics">Metrics reference</a> &mdash; all 14 metrics defined</li>
+              <li><a href="./challenge-rules.html#ranking">Ranking &amp; aggregation</a></li>
+              <li><a href="./challenge-rules.html#rules">Rules &amp; eligibility</a></li>
+              <li><a href="./challenge-submission.html#format">Submission format</a></li>
+              <li><a href="./challenge-submission.html#verification">Verification process</a></li>
+              <li><a href="./challenge-submission.html#faq">FAQ</a></li>
+            </ol>
+          </div>
+
+          <div class="re-callout mt-5">
+            <p class="re-callout-title">Hardware note</p>
+            <p class="is-size-7">
+              RoboEval runs on MuJoCo and evaluates on CPU or a single consumer GPU. VR teleoperation for collecting
+              your own demonstrations additionally requires an Oculus Quest and GLIBC 2.32+.
+            </p>
+          </div>
+
+          <div class="re-callout mt-4">
+            <p class="re-callout-title">Questions?</p>
+            <p class="is-size-7">
+              Open an issue on the
+              <a href="https://github.com/Robo-Eval/RoboEval/issues" target="_blank" rel="noopener">RoboEval
+                repository</a> or email the track organizers &mdash; see <a href="#contact">Contact</a> below.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========================== Organizers ========================== -->
+  <section class="section pt-0">
+    <div class="container is-max-widescreen">
+      <div class="re-section-label">
+        <span class="re-num">08</span>
+        <h2 class="title is-4 mb-0 re-anchor" id="organizers">Track Organizers</h2>
+      </div>
+
+      <p class="mb-4">
+        This track is organized by the RoboEval team at the University of Washington and the Allen Institute for AI.
+      </p>
+
+      <div class="content">
+        <p>
+          <a href="https://helen9975.github.io/" target="_blank" rel="noopener">Yi Ru Wang</a><sup>1</sup> &middot;
+          <a href="https://carteruh.github.io/" target="_blank" rel="noopener">Carter Ung</a><sup>1</sup> &middot;
+          <a href="https://www.duanjiafei.com" target="_blank" rel="noopener">Jiafei Duan</a><sup>1,2</sup> &middot;
+          <a href="https://www.markusgrotz.com/" target="_blank" rel="noopener">Markus Grotz</a><sup>1</sup> &middot;
+          <a href="https://wpumacay.github.io/" target="_blank" rel="noopener">Wilbert Pumacay</a><sup>1</sup> &middot;
+          <a href="https://ranjaykrishna.com/index.html" target="_blank" rel="noopener">Ranjay Krishna</a><sup>1,2</sup>
+          &middot;
+          <a href="https://homes.cs.washington.edu/~fox/" target="_blank" rel="noopener">Dieter Fox</a><sup>1</sup>
+          &middot;
+          <a href="https://goodrobot.ai/" target="_blank" rel="noopener">Siddhartha Srinivasa</a><sup>1</sup>
+        </p>
+        <p class="is-size-7 has-text-grey">
+          <sup>1</sup>University of Washington &nbsp;&middot;&nbsp; <sup>2</sup>Allen Institute for AI
+        </p>
+      </div>
+
+      <h3 class="title is-5 mt-5 re-anchor" id="contact">Contact</h3>
+      <p>
+        Track questions: <a href="mailto:yiruwang@cs.washington.edu">yiruwang@cs.washington.edu</a><br>
+        Workshop questions: <a href="mailto:zhenzhenl@nvidia.com">zhenzhenl@nvidia.com</a><br>
+        Technical issues: <a href="https://github.com/Robo-Eval/RoboEval/issues" target="_blank"
+          rel="noopener">github.com/Robo-Eval/RoboEval/issues</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- ====================== Companion tracks ====================== -->
+  <section class="section pt-0">
+    <div class="container is-max-widescreen">
+      <div class="re-section-label">
+        <span class="re-num">09</span>
+        <h2 class="title is-4 mb-0 re-anchor" id="suite">The Other Tracks</h2>
+      </div>
+
+      <p class="mb-5">
+        The challenge suite runs three independent tracks under a shared reporting standard. Entering one does not
+        require entering the others.
+      </p>
+
+      <div class="columns is-variable is-4">
+        <div class="column">
+          <div class="re-feature">
+            <span class="re-tag-pill">Track 1</span>
+            <h4 class="mt-3">BEHAVIOR Long-Horizon Household</h4>
+            <p>1,000 household activities across 50 scenes and 10,000 objects in Isaac Sim, with long-horizon
+              navigation and bimanual manipulation.</p>
+            <p class="mt-3"><a href="https://behavior.stanford.edu/" target="_blank"
+                rel="noopener">behavior.stanford.edu &#8599;</a></p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="re-feature" style="border-color: rgba(50,115,220,0.45);">
+            <span class="re-tag-pill is-live">Track 2 &mdash; This page</span>
+            <h4 class="mt-3">RoboEval Diagnostic Bimanual</h4>
+            <p>Stage-level failure diagnosis for bimanual manipulation in MuJoCo, scored on behavior as well as
+              outcome.</p>
+            <p class="mt-3"><a href="./challenge.html">robo-eval.github.io</a></p>
+          </div>
+        </div>
+        <div class="column">
+          <div class="re-feature">
+            <span class="re-tag-pill">Track 3</span>
+            <h4 class="mt-3">RoboChess Sim-to-Real</h4>
+            <p>Policies trained in GPU-accelerated simulation must generalize to physical robots across multiple
+              real-world embodiments.</p>
+            <p class="mt-3"><a href="https://sites.google.com/view/corl-workshop-robochess" target="_blank"
+                rel="noopener">RoboChess challenge &#8599;</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ Citation ============================ -->
+  <section class="section pt-0">
+    <div class="container is-max-widescreen">
+      <div class="re-section-label">
+        <span class="re-num">10</span>
+        <h2 class="title is-4 mb-0 re-anchor" id="citation">Citation</h2>
+      </div>
+
+      <p class="mb-3">If you use RoboEval or participate in this challenge, please cite:</p>
+
+      <pre class="re-code"><code>@misc{wang2025roboevalroboticmanipulationmeets,
+      title={RoboEval: Where Robotic Manipulation Meets Structured and Scalable Evaluation},
+      author={Yi Ru Wang and Carter Ung and Grant Tannert and Jiafei Duan and Josephine Li
+              and Amy Le and Rishabh Oswal and Markus Grotz and Wilbert Pumacay
+              and Yuquan Deng and Ranjay Krishna and Dieter Fox and Siddhartha Srinivasa},
+      year={2025},
+      eprint={2507.00435},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO}
+}</code></pre>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column">
+          <div class="content has-text-centered">
+            <p>
+              <a href="./index.html">RoboEval</a> &middot;
+              <a href="./challenge.html">CoRL 2026 Challenge</a> &middot;
+              <a href="https://github.com/Robo-Eval/RoboEval" target="_blank" rel="noopener">GitHub</a> &middot;
+              <a href="https://arxiv.org/pdf/2507.00435" target="_blank" rel="noopener">Paper</a>
+            </p>
+            <p>
+              Website template borrowed from <a href="https://github.com/nerfies/nerfies.github.io">NeRFies</a>
+              made by the amazing <a href="https://keunhong.com/">Keunhong Park</a>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>

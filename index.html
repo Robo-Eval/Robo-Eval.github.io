@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="has-navbar-fixed-top">
 
 <head>
   <meta charset="utf-8">
@@ -17,6 +17,7 @@
   <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/challenge.css">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
@@ -24,6 +25,7 @@
   <script src="./static/js/bulma-slider.min.js"></script>
   <script src="./static/js/index.js"></script>
   <script defer src="./static/js/leaderboard.js"></script>
+  <script defer src="./static/js/challenge.js"></script>
 
 
 
@@ -203,6 +205,70 @@
 
 <body onload="">
 
+  <!-- ======================= Shared site navigation ======================= -->
+  <nav class="navbar re-navbar is-fixed-top" role="navigation" aria-label="main navigation">
+    <div class="container is-max-widescreen">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="./index.html">
+          <img src="./media/e.png" alt="RoboEval" />
+        </a>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="reNavMenu">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="reNavMenu" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" data-nav="home" href="./index.html">Home</a>
+
+          <div class="navbar-item has-dropdown is-hoverable" data-nav="challenge">
+            <a class="navbar-link" href="./challenge.html">
+              <span class="re-nav-trophy">&#127942;</span>CoRL 2026 Challenge
+            </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="./challenge.html">Challenge Overview</a>
+              <a class="navbar-item" href="./challenge.html#dates">Important Dates</a>
+              <a class="navbar-item" href="./challenge.html#tasks">Tasks &amp; Data</a>
+              <a class="navbar-item" href="./challenge.html#getting-started">Getting Started</a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item" href="./challenge-rules.html">Evaluation &amp; Rules</a>
+              <a class="navbar-item" href="./challenge-submission.html">Submission Guidelines</a>
+              <a class="navbar-item" href="./index.html#leaderboard">Leaderboard</a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item re-nav-ext" href="https://corl2026-realworld-robot-learning.github.io/#challenges" target="_blank" rel="noopener">Workshop Website</a>
+            </div>
+          </div>
+
+          <div class="navbar-item has-dropdown is-hoverable" data-nav="docs">
+            <a class="navbar-link" href="./challenge-rules.html">Documentation</a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="./challenge-rules.html#metrics">Metrics Reference</a>
+              <a class="navbar-item" href="./challenge-rules.html#protocol">Evaluation Protocol</a>
+              <a class="navbar-item" href="./challenge-submission.html#format">Submission Format</a>
+              <a class="navbar-item" href="./challenge-submission.html#faq">FAQ</a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item re-nav-ext" href="https://robo-eval.github.io/RoboEval-Documentation/" target="_blank" rel="noopener">RoboEval Docs</a>
+            </div>
+          </div>
+
+          <a class="navbar-item" data-nav="leaderboard" href="./index.html#leaderboard">Leaderboard</a>
+        </div>
+
+        <div class="navbar-end">
+          <a class="navbar-item" href="https://arxiv.org/pdf/2507.00435" target="_blank" rel="noopener">
+            <span class="icon is-small mr-1"><i class="ai ai-arxiv"></i></span> Paper
+          </a>
+          <a class="navbar-item" href="https://github.com/Robo-Eval/RoboEval" target="_blank" rel="noopener">
+            <span class="icon is-small mr-1"><i class="fab fa-github"></i></span> Code
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+
 
 
   <section class="hero">
@@ -291,8 +357,40 @@
                   &nbsp;Leaderboard
                 </a>
               </span>
+              <span class="link-block">
+                <a href="./challenge.html" class="link-button" style="background-color:#b8860b;">
+                  <i class="fas fa-flag-checkered"></i>
+                  &nbsp;CoRL 2026 Challenge
+                </a>
+              </span>
             </div>
 
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===================== CoRL 2026 Challenge banner ===================== -->
+  <section class="section pb-0">
+    <div class="container is-max-desktop">
+      <div class="re-challenge-banner">
+        <div class="re-challenge-banner-body">
+          <span class="re-eyebrow">&#127942; CoRL 2026 &middot; Challenge Suite &middot; Track 2</span>
+          <h2 class="title is-4 mb-2">RoboEval Diagnostic Bimanual Challenge</h2>
+          <p class="mb-4">
+            RoboEval hosts Track 2 of the CoRL 2026 Embodied AI Benchmark and Sim-to-Real Challenge Suite at the
+            workshop <em>From GPU-Accelerated Simulation to Scalable and Generalizable Real Robot Policy
+            Learning</em> &mdash; November 12, 2026, Austin, Texas. Build bimanual policies scored on coordination,
+            efficiency, and safety, not just binary success.
+          </p>
+          <div class="re-cta-row" style="margin-top:0;">
+            <a class="re-btn" href="./challenge.html">
+              <span class="icon is-small"><i class="fas fa-flag-checkered"></i></span> Challenge Overview
+            </a>
+            <a class="re-btn is-ghost" href="./challenge-rules.html">Evaluation &amp; Rules</a>
+            <a class="re-btn is-ghost" href="./challenge-submission.html">How to Submit</a>
           </div>
         </div>
       </div>
@@ -415,7 +513,8 @@
                 <p>
                   RoboEval is a benchmark for evaluating bimanual manipulation policies under diverse task settings.
                   The first
-                  iteration consists of 10 base tasks and 3000+ human demonstrations. The tasks are derived from common
+                  iteration consists of 8 base tasks with 28 variations and 3000+ human demonstrations. The tasks are
+                  derived from common
                   tasks that humans
                   perform in diverse settings, from service style tasks such as lifting a tray, to warehouse tasks like
                   closing a box, to
@@ -514,6 +613,8 @@
             </div>
           </div>
         </div>
+      </div>
+    </div>
   </section>
 
 
@@ -663,7 +764,6 @@
           >
         </figure>
       </div>
-    </div>
     </div>
     </div>
   </section>

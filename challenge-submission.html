@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+    content="How to package and submit an entry to the CoRL 2026 RoboEval Diagnostic Bimanual Challenge.">
+  <meta name="keywords" content="RoboEval, Submission, CoRL 2026, Challenge, Leaderboard">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Submission Guidelines &mdash; RoboEval Challenge</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/challenge.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script defer src="./static/js/challenge.js"></script>
+</head>
+
+<body>
+
+  <!-- ======================= Shared site navigation ======================= -->
+  <nav class="navbar re-navbar is-fixed-top" role="navigation" aria-label="main navigation">
+    <div class="container is-max-widescreen">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="./index.html">
+          <img src="./media/e.png" alt="RoboEval" />
+        </a>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="reNavMenu">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="reNavMenu" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" data-nav="home" href="./index.html">Home</a>
+
+          <div class="navbar-item has-dropdown is-hoverable" data-nav="challenge">
+            <a class="navbar-link" href="./challenge.html">
+              <span class="re-nav-trophy">&#127942;</span>CoRL 2026 Challenge
+            </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="./challenge.html">Challenge Overview</a>
+              <a class="navbar-item" href="./challenge.html#dates">Important Dates</a>
+              <a class="navbar-item" href="./challenge.html#tasks">Tasks &amp; Data</a>
+              <a class="navbar-item" href="./challenge.html#getting-started">Getting Started</a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item" href="./challenge-rules.html">Evaluation &amp; Rules</a>
+              <a class="navbar-item" href="./challenge-submission.html">Submission Guidelines</a>
+              <a class="navbar-item" href="./index.html#leaderboard">Leaderboard</a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item re-nav-ext" href="https://corl2026-realworld-robot-learning.github.io/#challenges" target="_blank" rel="noopener">Workshop Website</a>
+            </div>
+          </div>
+
+          <div class="navbar-item has-dropdown is-hoverable" data-nav="docs">
+            <a class="navbar-link" href="./challenge-rules.html">Documentation</a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="./challenge-rules.html#metrics">Metrics Reference</a>
+              <a class="navbar-item" href="./challenge-rules.html#protocol">Evaluation Protocol</a>
+              <a class="navbar-item" href="./challenge-submission.html#format">Submission Format</a>
+              <a class="navbar-item" href="./challenge-submission.html#faq">FAQ</a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item re-nav-ext" href="https://robo-eval.github.io/RoboEval-Documentation/" target="_blank" rel="noopener">RoboEval Docs</a>
+            </div>
+          </div>
+
+          <a class="navbar-item" data-nav="leaderboard" href="./index.html#leaderboard">Leaderboard</a>
+        </div>
+
+        <div class="navbar-end">
+          <a class="navbar-item" href="https://arxiv.org/pdf/2507.00435" target="_blank" rel="noopener">
+            <span class="icon is-small mr-1"><i class="ai ai-arxiv"></i></span> Paper
+          </a>
+          <a class="navbar-item" href="https://github.com/Robo-Eval/RoboEval" target="_blank" rel="noopener">
+            <span class="icon is-small mr-1"><i class="fab fa-github"></i></span> Code
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="re-page-hero">
+    <div class="container is-max-widescreen">
+      <span class="re-eyebrow">Documentation</span>
+      <h1 class="re-page-title">Submission Guidelines</h1>
+      <p class="re-page-lede">
+        You run the RoboEval evaluation harness locally, package the checkpoint and metrics it produces, and submit a
+        link. Organizers verify leading entries by re-running them.
+      </p>
+      <div class="re-cta-row">
+        <a class="re-btn is-ghost" href="./challenge-rules.html">
+          <span class="icon is-small"><i class="fas fa-arrow-left"></i></span> Evaluation &amp; Rules
+        </a>
+        <!-- TODO(organizers): replace href with the live Google Form URL when submissions open. -->
+        <a class="re-btn" href="#submit">
+          <span class="icon is-small"><i class="fas fa-paper-plane"></i></span> Submission Form
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container is-max-widescreen">
+      <div class="columns is-variable is-6">
+
+        <div class="column is-3">
+          <div class="re-toc" style="position: sticky; top: 5rem;">
+            <p class="has-text-weight-bold">On this page</p>
+            <ol>
+              <li><a href="#workflow">Submission workflow</a></li>
+              <li><a href="#format">Submission format</a></li>
+              <li><a href="#results-json">results.json schema</a></li>
+              <li><a href="#report">Technical report</a></li>
+              <li><a href="#submit">Submitting</a></li>
+              <li><a href="#verification">Verification</a></li>
+              <li><a href="#faq">FAQ</a></li>
+            </ol>
+          </div>
+        </div>
+
+        <div class="column is-9">
+
+          <div class="re-callout">
+            <p class="re-callout-title">Before you start</p>
+            <p>
+              Read the <a href="./challenge-rules.html#rules">rules</a> first. The most common cause of an invalidated
+              submission is an edited environment or metrics file, which is easy to avoid and painful to discover after
+              the deadline.
+            </p>
+          </div>
+
+          <!-- ======================= 1. Workflow ======================= -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">01</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="workflow">Submission Workflow</h2>
+          </div>
+
+          <ol class="re-steps">
+            <li>
+              <strong>Pin the challenge release</strong>
+              Check out the tagged challenge release so your numbers are comparable with everyone else's.
+              <pre class="re-code"><code># TODO(organizers): replace with the real challenge tag at launch
+git fetch --tags
+git checkout corl2026-challenge
+pip install -e ".[examples]"</code></pre>
+            </li>
+            <li>
+              <strong>Run the evaluation harness</strong>
+              Evaluate your policy across all 8 task families and 28 variations using the published evaluation seeds.
+              This writes the per-task, per-variation metrics that your ranking is computed from.
+              <pre class="re-code"><code>python examples/5_gather_metrics.py \
+    --policy path/to/your_policy.py \
+    --checkpoint path/to/checkpoint.pt \
+    --output submission/results.json</code></pre>
+              <p class="is-size-7 has-text-grey mt-2">
+                Exact flags follow the challenge release; <code class="re-inline-code">--help</code> is authoritative.
+              </p>
+            </li>
+            <li>
+              <strong>Assemble the submission bundle</strong>
+              Collect the checkpoint, metrics, rollout logs, and report into the layout described in
+              <a href="#format">Submission Format</a>.
+            </li>
+            <li>
+              <strong>Upload the bundle</strong>
+              Host it somewhere the organizers can download without an account request &mdash; Google Drive,
+              Hugging Face Hub, S3, or an institutional server. Hugging Face is preferred for checkpoints.
+            </li>
+            <li>
+              <strong>Submit the link through the form</strong>
+              One form entry per submission. See <a href="#submit">Submitting</a>.
+            </li>
+          </ol>
+
+          <!-- ======================= 2. Format ======================= -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">02</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="format">Submission Format</h2>
+          </div>
+
+          <p>Your uploaded bundle must have this structure:</p>
+
+          <pre class="re-code"><code>submission/
+├── results.json            # REQUIRED — harness output, see schema below
+├── report.pdf              # REQUIRED — technical report, max 4 pages + refs
+├── metadata.yaml           # REQUIRED — team and method declaration
+├── checkpoint/             # REQUIRED — policy weights, loadable as declared
+│   └── ...
+├── policy/                 # REQUIRED — inference code needed to load and run
+│   ├── policy.py           #            the checkpoint against RoboEval
+│   └── requirements.txt
+└── logs/                   # REQUIRED — raw per-episode evaluation logs
+    └── &lt;Task&gt;_&lt;Variation&gt;/
+        └── episode_&lt;i&gt;.json</code></pre>
+
+          <h3 class="title is-5 mt-5">metadata.yaml</h3>
+          <pre class="re-code"><code>team_name: "Your Team"
+method_name: "YourMethod-v2"
+contact_email: "you@example.edu"
+affiliation: "Your Institution"
+members:
+  - "First Author"
+  - "Second Author"
+
+roboeval_release: "corl2026-challenge"
+action_mode: "JointPosition(absolute=true, ee=false)"
+observation_mode: "full"          # full | lightweight
+control_frequency: 20             # Hz
+policy_seed: 0
+
+training_data:
+  roboeval_demos: true            # did you train on the provided demonstrations?
+  additional_demos: 0             # count of self-collected demonstrations
+  external_pretraining: "OXE, DROID"   # or "none"
+training_gpu_hours: 128
+
+open_source: true
+code_url: "https://github.com/you/your-method"
+checkpoint_url: "https://huggingface.co/you/your-method"</code></pre>
+
+          <div class="re-callout is-warning">
+            <p class="re-callout-title">Size limits</p>
+            <p>
+              Keep the bundle under <span class="re-tba">TBC</span> GB. If your checkpoint is larger, host it
+              separately and reference it from <code class="re-inline-code">metadata.yaml</code> rather than inlining
+              it. Compress <code class="re-inline-code">logs/</code> if needed &mdash; it is usually the largest part.
+            </p>
+          </div>
+
+          <!-- ===================== 3. results.json ===================== -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">03</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="results-json">results.json Schema</h2>
+          </div>
+
+          <p>
+            This file is produced by the harness. Do not edit it by hand &mdash; the verification step re-derives it
+            from your logs and a mismatch invalidates the submission. It is documented here so you can confirm the
+            harness ran over everything it should have.
+          </p>
+
+          <pre class="re-code"><code>{
+  "roboeval_release": "corl2026-challenge",
+  "method_name": "YourMethod-v2",
+  "episodes_per_variation": 50,
+  "seeds": [0, 1, 2, "..."],
+
+  "results": {
+    "LiftPot": {
+      "Static": {
+        "episodes": 50,
+        "metrics": {
+          "success": { "mean": 0.62, "std": 0.11 },
+          "tp":      { "mean": 0.78, "std": 0.07 },
+          "bavd":    { "mean": 0.19, "std": 0.03 },
+          "bgvd":    { "mean": 0.08, "std": 0.01 },
+          "cpl":     { "mean": 0.94, "std": 0.15 },
+          "ct":      { "mean": 4.81, "std": 0.62 },
+          "ecc":     { "mean": 1.90, "std": 0.44 },
+          "jpl":     { "mean": 5.72, "std": 0.98 },
+          "mcj":     { "mean": 5.11, "std": 0.87 },
+          "mjj":     { "mean": 27.4, "std": 3.90 },
+          "opl":     { "mean": 3.66, "std": 0.71 },
+          "scc":     { "mean": 1.12, "std": 0.51 },
+          "sc":      { "mean": 0.18, "std": 0.10 },
+          "tl":      { "mean": 601.3, "std": 84.2 }
+        }
+      },
+      "Position":                { "...": "..." },
+      "Orientation":             { "...": "..." },
+      "PositionAndOrientation":  { "...": "..." }
+    },
+
+    "LiftTray":                { "...": "..." },
+    "StackTwoBlocks":          { "...": "..." },
+    "StackSingleBookShelf":    { "...": "..." },
+    "CubeHandover":            { "...": "..." },
+    "PackBox":                 { "...": "..." },
+    "PickSingleBookFromTable": { "...": "..." },
+    "RotateValve":             { "...": "..." }
+  }
+}</code></pre>
+
+          <p class="is-size-7 has-text-grey">
+            Metric keys match the leaderboard schema in
+            <code class="re-inline-code">static/data/leaderboard_schema.json</code>. Every task family and every
+            variation must be present; a missing entry is scored as zero outcome for that variation rather than
+            excluded from the average.
+          </p>
+
+          <!-- ======================= 4. Report ======================= -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">04</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="report">Technical Report</h2>
+          </div>
+
+          <p>
+            A short report is required for every submission &mdash; maximum 4 pages plus references, CoRL format.
+            It is not peer-reviewed, and it does not affect your ranking. It exists so the community can learn
+            something from the leaderboard beyond a row of numbers. Cover:
+          </p>
+
+          <ul>
+            <li><strong>Method.</strong> Architecture, training objective, and what is novel relative to the
+              baselines.</li>
+            <li><strong>Data.</strong> Which demonstrations you trained on, any data you collected or generated, and
+              any external pretraining.</li>
+            <li><strong>Interface.</strong> Action mode, observation mode, control frequency, and any test-time
+              compute.</li>
+            <li><strong>Diagnostic analysis.</strong> Where your policy fails and why, using the stage-level and
+              behavioral metrics. This is the part we most want to read.</li>
+            <li><strong>Compute.</strong> Training GPU-hours and hardware.</li>
+          </ul>
+
+          <div class="re-callout">
+            <p class="re-callout-title">Reports can become workshop papers</p>
+            <p>
+              Challenge reports are welcome as submissions to the workshop's call for papers (short papers up to 5
+              pages, double-blind via OpenReview). See the
+              <a href="https://corl2026-realworld-robot-learning.github.io/" target="_blank" rel="noopener">workshop
+                site</a> for those deadlines, which are separate from the challenge deadline.
+            </p>
+          </div>
+
+          <!-- ======================= 5. Submitting ======================= -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">05</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="submit">Submitting</h2>
+          </div>
+
+          <p>
+            Submissions are made through a Google Form. One entry per submission; the most recent valid entry is the
+            one ranked.
+          </p>
+
+          <!-- TODO(organizers): create the Google Form and replace this block with the live link/button. -->
+          <div class="re-callout is-warning">
+            <p class="re-callout-title">Submission form opens at challenge launch</p>
+            <p>
+              The form link will be published here and on the
+              <a href="https://corl2026-realworld-robot-learning.github.io/#challenges" target="_blank"
+                rel="noopener">workshop site</a>. Until then, direct questions to
+              <a href="mailto:yiruwang@cs.washington.edu">yiruwang@cs.washington.edu</a>.
+            </p>
+          </div>
+
+          <p>The form collects:</p>
+          <ul>
+            <li>Team name, contact email, and affiliation</li>
+            <li>Method name as it should appear on the leaderboard</li>
+            <li>Download link to your submission bundle</li>
+            <li>Whether you are opting into the open-source award</li>
+            <li>Confirmation that you have read and followed the <a href="./challenge-rules.html#rules">rules</a></li>
+          </ul>
+
+          <p>
+            You receive an acknowledgment within <span class="re-tba">TBC</span> business days. Leaderboard entries
+            appear after the automated schema check passes.
+          </p>
+
+          <!-- ======================= 6. Verification ======================= -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">06</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="verification">Verification</h2>
+          </div>
+
+          <p>Every submission goes through two checks, and leading submissions go through a third.</p>
+
+          <table class="re-spec mt-4">
+            <tbody>
+              <tr>
+                <th>1. Schema check</th>
+                <td>Automated. Confirms <code class="re-inline-code">results.json</code> is well-formed, covers all 28
+                  variations, and is consistent with the per-episode logs. Runs on submission; failures are reported
+                  back so you can fix and resubmit.</td>
+              </tr>
+              <tr>
+                <th>2. Consistency check</th>
+                <td>Automated. Recomputes metrics from <code class="re-inline-code">logs/</code> and compares against
+                  the reported aggregates. Divergence beyond floating-point tolerance is flagged for manual review.</td>
+              </tr>
+              <tr>
+                <th>3. Held-out re-run</th>
+                <td>Manual, for prize-eligible entries. Organizers load your checkpoint and re-evaluate on an
+                  unpublished seed set. Results must hold up within normal run-to-run variance.</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <p class="mt-4">
+            If step 3 cannot be completed &mdash; the checkpoint does not load, dependencies are unresolvable, or the
+            inference code is incomplete &mdash; organizers contact you once with a fixed window to supply a working
+            artifact. Entries that remain unreproducible are not eligible for prizes, though they may still be listed
+            on the leaderboard marked as unverified.
+          </p>
+
+          <!-- ========================== 7. FAQ ========================== -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">07</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="faq">FAQ</h2>
+          </div>
+
+          <div class="content">
+            <p class="has-text-weight-bold mb-1">Do I have to train on the provided demonstrations?</p>
+            <p>No. The 3,000+ demonstrations are provided as a convenience. You may train from scratch, use your own
+              data, or fine-tune a pretrained model. Just declare what you used.</p>
+
+            <p class="has-text-weight-bold mb-1 mt-4">Can I submit a separate model per task?</p>
+            <p>Yes, as long as one submission bundle covers all 28 variations and the report says so. A generalist
+              policy is not required, though we expect it to be discussed in the report.</p>
+
+            <p class="has-text-weight-bold mb-1 mt-4">Can I use ground-truth object poses?</p>
+            <p>Only if you declare the <code class="re-inline-code">lightweight</code> observation mode, which exposes
+              joint positions and object poses through the standard interface. Reading state the mode does not expose
+              is a rules violation. Submissions are grouped by observation mode on the leaderboard so image-based and
+              state-based methods are comparable.</p>
+
+            <p class="has-text-weight-bold mb-1 mt-4">My policy runs slower than 20&nbsp;Hz. Is that a problem?</p>
+            <p>No. Declare your actual control frequency in <code class="re-inline-code">metadata.yaml</code>. The
+              simulator steps at the declared rate, so a slower policy does not get free extra time within an episode,
+              but it is not disqualified either. Completion Time and Trajectory Length will reflect the difference.</p>
+
+            <p class="has-text-weight-bold mb-1 mt-4">Can I update my submission after the deadline?</p>
+            <p>Only to fix a reproducibility problem the organizers raise during verification. You cannot change the
+              policy or improve results after the deadline.</p>
+
+            <p class="has-text-weight-bold mb-1 mt-4">Is a workshop paper required to compete?</p>
+            <p>No. The 4-page technical report is required; a workshop paper is optional and follows the workshop's
+              own OpenReview deadlines.</p>
+
+            <p class="has-text-weight-bold mb-1 mt-4">Do I need to attend CoRL 2026 to win?</p>
+            <p>No, but winning teams are invited to present at the workshop on November 12, 2026, and we strongly
+              encourage attendance. Travel support may be available &mdash; see
+              <a href="./challenge.html#prizes">Prizes</a>.</p>
+
+            <p class="has-text-weight-bold mb-1 mt-4">Where do I ask technical questions?</p>
+            <p>Open an issue on the
+              <a href="https://github.com/Robo-Eval/RoboEval/issues" target="_blank" rel="noopener">RoboEval
+                repository</a>. Questions about rules or eligibility go to
+              <a href="mailto:yiruwang@cs.washington.edu">yiruwang@cs.washington.edu</a>.</p>
+          </div>
+
+          <div class="re-cta-row mt-6">
+            <a class="re-btn is-ghost" href="./challenge.html">
+              <span class="icon is-small"><i class="fas fa-arrow-left"></i></span> Back to Challenge Overview
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column">
+          <div class="content has-text-centered">
+            <p>
+              <a href="./index.html">RoboEval</a> &middot;
+              <a href="./challenge.html">CoRL 2026 Challenge</a> &middot;
+              <a href="https://github.com/Robo-Eval/RoboEval" target="_blank" rel="noopener">GitHub</a> &middot;
+              <a href="https://arxiv.org/pdf/2507.00435" target="_blank" rel="noopener">Paper</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>

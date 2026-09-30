@@ -1,0 +1,533 @@
+/* ==========================================================================
+   RoboEval — shared navigation + challenge page styles
+   Layered on top of Bulma. Loaded by index.html and all challenge/* pages.
+   ========================================================================== */
+
+:root {
+  --re-accent: #3273dc;
+  --re-accent-dark: #2366d1;
+  --re-ink: #1f2430;
+  --re-muted: #6b7280;
+  --re-line: #e3e6ed;
+  --re-surface: #ffffff;
+  --re-surface-alt: #f7f8fb;
+  --re-gold: #b8860b;
+  --re-success: #27ae60;
+  --re-danger: #c0392b;
+}
+
+/* ------------------------------ Navigation ------------------------------ */
+
+.re-navbar {
+  border-bottom: 1px solid var(--re-line);
+  box-shadow: 0 1px 4px rgba(16, 24, 40, 0.04);
+  background: var(--re-surface);
+}
+
+.re-navbar .navbar-brand .navbar-item img {
+  max-height: 2rem;
+}
+
+.re-navbar .navbar-item,
+.re-navbar .navbar-link {
+  font-size: 0.95rem;
+  color: var(--re-ink);
+}
+
+.re-navbar a.navbar-item:hover,
+.re-navbar .navbar-link:hover {
+  background-color: var(--re-surface-alt);
+  color: var(--re-accent);
+}
+
+/* Current page marker */
+.re-navbar a.navbar-item.is-current,
+.re-navbar .navbar-item.has-dropdown.is-current > .navbar-link {
+  color: var(--re-accent);
+  font-weight: 600;
+  box-shadow: inset 0 -2px 0 var(--re-accent);
+}
+
+.re-navbar .navbar-dropdown {
+  border-top: 2px solid var(--re-accent);
+  box-shadow: 0 8px 24px rgba(16, 24, 40, 0.12);
+}
+
+.re-navbar .navbar-dropdown .navbar-item {
+  padding-right: 2.5rem;
+}
+
+.re-navbar .navbar-dropdown .navbar-divider {
+  margin: 0.35rem 0;
+}
+
+.re-nav-trophy {
+  margin-right: 0.35rem;
+}
+
+/* Small "external link" affordance inside dropdowns */
+.re-nav-ext::after {
+  content: "\2197";
+  font-size: 0.8em;
+  margin-left: 0.35rem;
+  color: var(--re-muted);
+}
+
+/* ------------------------------ Page header ------------------------------ */
+
+.re-page-hero {
+  background: linear-gradient(180deg, var(--re-surface-alt) 0%, var(--re-surface) 100%);
+  border-bottom: 1px solid var(--re-line);
+  padding: 3.5rem 1.5rem 3rem;
+}
+
+.re-eyebrow {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--re-accent);
+  background: rgba(50, 115, 220, 0.09);
+  border-radius: 999px;
+  padding: 0.35rem 0.85rem;
+  margin-bottom: 1rem;
+}
+
+.re-page-title {
+  font-size: 2.6rem;
+  line-height: 1.15;
+  font-weight: 700;
+  color: var(--re-ink);
+  margin-bottom: 0.9rem;
+}
+
+.re-page-lede {
+  font-size: 1.12rem;
+  color: #40464f;
+  max-width: 54rem;
+}
+
+/* --------------------------- Section scaffolding --------------------------- */
+
+.re-section-label {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  border-bottom: 1px solid var(--re-line);
+  padding-bottom: 0.6rem;
+  margin-bottom: 1.6rem;
+}
+
+.re-section-label .re-num {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--re-accent);
+  letter-spacing: 0.06em;
+}
+
+/* Anchored headings clear the fixed navbar */
+.re-anchor {
+  scroll-margin-top: 4.5rem;
+}
+
+/* ------------------------------- Timeline ------------------------------- */
+
+.re-timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-left: 2px solid var(--re-line);
+}
+
+.re-timeline > li {
+  position: relative;
+  padding: 0 0 1.6rem 1.6rem;
+}
+
+.re-timeline > li:last-child {
+  padding-bottom: 0;
+}
+
+.re-timeline > li::before {
+  content: "";
+  position: absolute;
+  left: -7px;
+  top: 0.45rem;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--re-surface);
+  border: 2px solid var(--re-line);
+}
+
+.re-timeline > li.is-live::before {
+  background: var(--re-accent);
+  border-color: var(--re-accent);
+  box-shadow: 0 0 0 4px rgba(50, 115, 220, 0.16);
+}
+
+.re-timeline .re-tl-date {
+  display: block;
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--re-ink);
+}
+
+.re-timeline .re-tl-what {
+  color: var(--re-muted);
+  font-size: 0.95rem;
+}
+
+.re-tba {
+  font-style: italic;
+  color: var(--re-muted);
+  font-weight: 600;
+}
+
+/* -------------------------------- Prizes -------------------------------- */
+
+.re-prize {
+  height: 100%;
+  border: 1px solid var(--re-line);
+  border-radius: 12px;
+  background: var(--re-surface);
+  padding: 1.4rem 1.2rem;
+  text-align: center;
+}
+
+.re-prize.is-first {
+  border-color: rgba(184, 134, 11, 0.45);
+  background: linear-gradient(180deg, rgba(184, 134, 11, 0.07), var(--re-surface));
+}
+
+.re-prize .re-prize-rank {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--re-muted);
+}
+
+.re-prize .re-prize-amount {
+  font-size: 1.85rem;
+  font-weight: 700;
+  color: var(--re-ink);
+  margin: 0.35rem 0 0.2rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.re-prize .re-prize-note {
+  font-size: 0.88rem;
+  color: var(--re-muted);
+}
+
+/* -------------------------------- Callouts -------------------------------- */
+
+.re-callout {
+  border-left: 4px solid var(--re-accent);
+  background: var(--re-surface-alt);
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.2rem;
+  margin: 1.5rem 0;
+}
+
+.re-callout.is-warning {
+  border-left-color: #d98924;
+  background: #fdf7ee;
+}
+
+.re-callout.is-danger {
+  border-left-color: var(--re-danger);
+  background: #fdf1f0;
+}
+
+.re-callout .re-callout-title {
+  font-weight: 700;
+  color: var(--re-ink);
+  margin-bottom: 0.3rem;
+}
+
+.re-callout p:last-child {
+  margin-bottom: 0;
+}
+
+/* --------------------------- Snapshot / spec table --------------------------- */
+
+.re-spec {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0;
+  font-size: 0.97rem;
+}
+
+.re-spec th,
+.re-spec td {
+  border: 0;
+  border-bottom: 1px solid var(--re-line);
+  padding: 0.75rem 0.9rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.re-spec th {
+  width: 34%;
+  background: transparent;
+  font-weight: 600;
+  color: var(--re-muted);
+  white-space: nowrap;
+}
+
+.re-spec tr:last-child th,
+.re-spec tr:last-child td {
+  border-bottom: 0;
+}
+
+/* Data tables on challenge pages */
+.re-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.re-table th,
+.re-table td {
+  border: 0;
+  border-bottom: 1px solid var(--re-line);
+  padding: 0.6rem 0.75rem;
+  text-align: left;
+}
+
+.re-table thead th {
+  background: var(--re-surface-alt);
+  color: var(--re-ink);
+  font-weight: 600;
+  white-space: nowrap;
+  border-bottom: 2px solid var(--re-line);
+}
+
+.re-table tbody tr:hover {
+  background: var(--re-surface-alt);
+}
+
+.re-table code {
+  font-size: 0.88em;
+}
+
+/* --------------------------------- Cards --------------------------------- */
+
+.re-feature {
+  height: 100%;
+  border: 1px solid var(--re-line);
+  border-radius: 12px;
+  padding: 1.3rem;
+  background: var(--re-surface);
+}
+
+.re-feature .re-feature-icon {
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(50, 115, 220, 0.1);
+  color: var(--re-accent);
+  margin-bottom: 0.75rem;
+}
+
+.re-feature h4 {
+  font-weight: 700;
+  color: var(--re-ink);
+  margin-bottom: 0.4rem;
+}
+
+.re-feature p,
+.re-feature ul {
+  color: #4a5160;
+  font-size: 0.94rem;
+  margin-bottom: 0;
+}
+
+/* ------------------------------- Steps list ------------------------------- */
+
+.re-steps {
+  counter-reset: re-step;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.re-steps > li {
+  counter-increment: re-step;
+  position: relative;
+  padding-left: 3rem;
+  margin-bottom: 1.5rem;
+}
+
+.re-steps > li::before {
+  content: counter(re-step);
+  position: absolute;
+  left: 0;
+  top: -0.1rem;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--re-accent);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.re-steps > li > strong:first-child {
+  display: block;
+  color: var(--re-ink);
+}
+
+/* ------------------------------ Code blocks ------------------------------ */
+
+.re-code {
+  background: #1f2430;
+  color: #e6e9f0;
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  overflow-x: auto;
+  font-size: 0.87rem;
+  line-height: 1.55;
+  margin: 1rem 0;
+}
+
+.re-code code {
+  background: transparent;
+  color: inherit;
+  padding: 0;
+  font-size: inherit;
+  white-space: pre;
+}
+
+.re-inline-code {
+  background: var(--re-surface-alt);
+  border: 1px solid var(--re-line);
+  border-radius: 4px;
+  padding: 0.1rem 0.35rem;
+  font-size: 0.88em;
+  color: #c7254e;
+}
+
+/* --------------------------------- Misc --------------------------------- */
+
+.re-tag-pill {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  padding: 0.2rem 0.6rem;
+  background: var(--re-surface-alt);
+  color: var(--re-muted);
+  border: 1px solid var(--re-line);
+}
+
+.re-tag-pill.is-live {
+  background: rgba(39, 174, 96, 0.12);
+  color: #1e8449;
+  border-color: rgba(39, 174, 96, 0.3);
+}
+
+.re-toc {
+  border: 1px solid var(--re-line);
+  border-radius: 12px;
+  background: var(--re-surface-alt);
+  padding: 1.1rem 1.3rem;
+}
+
+.re-toc ol {
+  margin: 0.5rem 0 0 1.1rem;
+  font-size: 0.94rem;
+}
+
+.re-toc li {
+  margin-bottom: 0.3rem;
+}
+
+.re-cta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.6rem;
+}
+
+.re-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.1rem;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid var(--re-accent);
+  background: var(--re-accent);
+  color: #fff;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.re-btn:hover {
+  background: var(--re-accent-dark);
+  border-color: var(--re-accent-dark);
+  color: #fff;
+}
+
+.re-btn.is-ghost {
+  background: transparent;
+  color: var(--re-accent);
+}
+
+.re-btn.is-ghost:hover {
+  background: rgba(50, 115, 220, 0.08);
+  color: var(--re-accent-dark);
+}
+
+@media screen and (max-width: 768px) {
+  .re-page-title {
+    font-size: 1.95rem;
+  }
+  .re-page-hero {
+    padding: 2.5rem 1rem 2rem;
+  }
+  .re-spec th {
+    width: auto;
+    white-space: normal;
+  }
+}
+
+/* ---------------------- Homepage challenge banner ---------------------- */
+
+.re-challenge-banner {
+  border: 1px solid rgba(184, 134, 11, 0.35);
+  border-left: 5px solid var(--re-gold);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(184, 134, 11, 0.07), rgba(50, 115, 220, 0.05));
+  padding: 1.8rem 2rem;
+}
+
+.re-challenge-banner .re-eyebrow {
+  color: var(--re-gold);
+  background: rgba(184, 134, 11, 0.12);
+}
+
+.re-challenge-banner p {
+  color: #434a55;
+  max-width: 62rem;
+}
+
+@media screen and (max-width: 768px) {
+  .re-challenge-banner {
+    padding: 1.3rem 1.2rem;
+  }
+}

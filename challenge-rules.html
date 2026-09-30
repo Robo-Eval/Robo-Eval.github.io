@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html class="has-navbar-fixed-top">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+    content="Evaluation protocol, metric definitions, ranking scheme, and rules for the CoRL 2026 RoboEval Diagnostic Bimanual Challenge.">
+  <meta name="keywords" content="RoboEval, Evaluation, Metrics, Rules, CoRL 2026, Challenge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Evaluation &amp; Rules &mdash; RoboEval Challenge</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="stylesheet" href="./static/css/challenge.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script defer src="./static/js/challenge.js"></script>
+</head>
+
+<body>
+
+  <!-- ======================= Shared site navigation ======================= -->
+  <nav class="navbar re-navbar is-fixed-top" role="navigation" aria-label="main navigation">
+    <div class="container is-max-widescreen">
+      <div class="navbar-brand">
+        <a class="navbar-item" href="./index.html">
+          <img src="./media/e.png" alt="RoboEval" />
+        </a>
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="reNavMenu">
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+          <span aria-hidden="true"></span>
+        </a>
+      </div>
+
+      <div id="reNavMenu" class="navbar-menu">
+        <div class="navbar-start">
+          <a class="navbar-item" data-nav="home" href="./index.html">Home</a>
+
+          <div class="navbar-item has-dropdown is-hoverable" data-nav="challenge">
+            <a class="navbar-link" href="./challenge.html">
+              <span class="re-nav-trophy">&#127942;</span>CoRL 2026 Challenge
+            </a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="./challenge.html">Challenge Overview</a>
+              <a class="navbar-item" href="./challenge.html#dates">Important Dates</a>
+              <a class="navbar-item" href="./challenge.html#tasks">Tasks &amp; Data</a>
+              <a class="navbar-item" href="./challenge.html#getting-started">Getting Started</a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item" href="./challenge-rules.html">Evaluation &amp; Rules</a>
+              <a class="navbar-item" href="./challenge-submission.html">Submission Guidelines</a>
+              <a class="navbar-item" href="./index.html#leaderboard">Leaderboard</a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item re-nav-ext" href="https://corl2026-realworld-robot-learning.github.io/#challenges" target="_blank" rel="noopener">Workshop Website</a>
+            </div>
+          </div>
+
+          <div class="navbar-item has-dropdown is-hoverable" data-nav="docs">
+            <a class="navbar-link" href="./challenge-rules.html">Documentation</a>
+            <div class="navbar-dropdown">
+              <a class="navbar-item" href="./challenge-rules.html#metrics">Metrics Reference</a>
+              <a class="navbar-item" href="./challenge-rules.html#protocol">Evaluation Protocol</a>
+              <a class="navbar-item" href="./challenge-submission.html#format">Submission Format</a>
+              <a class="navbar-item" href="./challenge-submission.html#faq">FAQ</a>
+              <hr class="navbar-divider" />
+              <a class="navbar-item re-nav-ext" href="https://robo-eval.github.io/RoboEval-Documentation/" target="_blank" rel="noopener">RoboEval Docs</a>
+            </div>
+          </div>
+
+          <a class="navbar-item" data-nav="leaderboard" href="./index.html#leaderboard">Leaderboard</a>
+        </div>
+
+        <div class="navbar-end">
+          <a class="navbar-item" href="https://arxiv.org/pdf/2507.00435" target="_blank" rel="noopener">
+            <span class="icon is-small mr-1"><i class="ai ai-arxiv"></i></span> Paper
+          </a>
+          <a class="navbar-item" href="https://github.com/Robo-Eval/RoboEval" target="_blank" rel="noopener">
+            <span class="icon is-small mr-1"><i class="fab fa-github"></i></span> Code
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <header class="re-page-hero">
+    <div class="container is-max-widescreen">
+      <span class="re-eyebrow">Documentation</span>
+      <h1 class="re-page-title">Evaluation &amp; Rules</h1>
+      <p class="re-page-lede">
+        How submissions to the RoboEval Diagnostic Bimanual Challenge are run, measured, and ranked &mdash; and what
+        participants are and are not permitted to do.
+      </p>
+      <div class="re-cta-row">
+        <a class="re-btn is-ghost" href="./challenge.html">
+          <span class="icon is-small"><i class="fas fa-arrow-left"></i></span> Challenge Overview
+        </a>
+        <a class="re-btn" href="./challenge-submission.html">
+          <span class="icon is-small"><i class="fas fa-paper-plane"></i></span> Submission Guidelines
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <section class="section">
+    <div class="container is-max-widescreen">
+      <div class="columns is-variable is-6">
+
+        <!-- ------------------------- Sidebar TOC ------------------------- -->
+        <div class="column is-3">
+          <div class="re-toc" style="position: sticky; top: 5rem;">
+            <p class="has-text-weight-bold">On this page</p>
+            <ol>
+              <li><a href="#protocol">Evaluation protocol</a></li>
+              <li><a href="#metrics">Metrics reference</a></li>
+              <li><a href="#ranking">Ranking &amp; aggregation</a></li>
+              <li><a href="#rules">Rules &amp; eligibility</a></li>
+              <li><a href="#reproducibility">Reproducibility</a></li>
+              <li><a href="#licensing">Licensing &amp; conduct</a></li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- --------------------------- Content --------------------------- -->
+        <div class="column is-9">
+
+          <div class="re-callout">
+            <p class="re-callout-title">Protocol status</p>
+            <p>
+              The structure below is final. Exact numeric settings marked
+              <span class="re-tba">TBC</span> (episode counts, evaluation seeds, and scoring weights) are confirmed
+              when the challenge launches, and the launch announcement is authoritative if the two ever disagree.
+            </p>
+          </div>
+
+          <!-- =================== 1. Evaluation protocol =================== -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">01</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="protocol">Evaluation Protocol</h2>
+          </div>
+
+          <h3 class="title is-5">What gets run</h3>
+          <p>
+            Every submission is evaluated on <strong>all 8 task families across all 28 variations</strong>. There is no
+            task selection: a policy that is excellent on two families and absent on six will rank poorly. Each
+            task&ndash;variation pair is run for a fixed number of independent episodes with fixed evaluation seeds.
+          </p>
+
+          <!-- TODO(organizers): confirm episode count and seed set before launch. -->
+          <table class="re-spec mt-4">
+            <tbody>
+              <tr>
+                <th>Task families</th>
+                <td>8 (all mandatory)</td>
+              </tr>
+              <tr>
+                <th>Variations</th>
+                <td>28 (all mandatory)</td>
+              </tr>
+              <tr>
+                <th>Episodes per variation</th>
+                <td><span class="re-tba">TBC</span> &mdash; identical for every submission</td>
+              </tr>
+              <tr>
+                <th>Evaluation seeds</th>
+                <td><span class="re-tba">TBC</span> &mdash; published as a fixed list at launch</td>
+              </tr>
+              <tr>
+                <th>Episode termination</th>
+                <td>On task success, on the per-task step budget, or on an unrecoverable simulator state</td>
+              </tr>
+              <tr>
+                <th>Control frequency</th>
+                <td>20&nbsp;Hz default; submissions may use a different rate if declared in the report</td>
+              </tr>
+              <tr>
+                <th>Simulator</th>
+                <td>MuJoCo, bimanual Franka Panda, as pinned in the challenge release tag</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <h3 class="title is-5 mt-5">Seeds and determinism</h3>
+          <p>
+            Evaluation seeds control initial object poses within each variation's distribution. They are published, not
+            secret &mdash; the challenge tests spatial generalization, not seed guessing. Overfitting to the published
+            evaluation seeds is nonetheless a rules violation (see <a href="#rules">Rules</a>), and organizers re-run
+            leading submissions on a held-out seed set to confirm results hold.
+          </p>
+
+          <div class="re-callout is-warning">
+            <p class="re-callout-title">Held-out verification</p>
+            <p>
+              Top-ranked entries are re-evaluated by the organizers on an unpublished seed set drawn from the same
+              variation distributions. A submission whose held-out performance departs substantially from its reported
+              numbers is investigated before any award is confirmed.
+            </p>
+          </div>
+
+          <h3 class="title is-5 mt-5">Stage-level scoring</h3>
+          <p>
+            Each task decomposes into ordered, skill-specific stages &mdash; for example
+            <em>Stack Single Book Shelf</em> runs push &rarr; grasp &rarr; lift &rarr; place. The evaluator records the
+            furthest stage reached in every episode, which produces Task Progression and localizes failures. An episode
+            that grasps correctly but never places is scored differently from one that never made contact, even though
+            both have a success of 0.
+          </p>
+
+          <!-- ===================== 2. Metrics reference ===================== -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">02</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="metrics">Metrics Reference</h2>
+          </div>
+
+          <p class="mb-4">
+            Fourteen metrics across four families. <strong>&uarr;</strong> means higher is better,
+            <strong>&darr;</strong> means lower is better. All are computed by the RoboEval evaluation harness and
+            reported per task, per variation, as mean and standard deviation over episodes.
+          </p>
+
+          <div class="table-container">
+            <table class="re-table">
+              <thead>
+                <tr>
+                  <th>Metric</th>
+                  <th>Key</th>
+                  <th>Dir.</th>
+                  <th>Unit</th>
+                  <th>Definition</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td colspan="5" style="background:#f7f8fb; font-weight:700;">Outcome</td></tr>
+                <tr>
+                  <td>Success</td><td><code>success</code></td><td>&uarr;</td><td>fraction</td>
+                  <td>Whether the episode reached the task goal. Binary per episode, averaged over episodes.</td>
+                </tr>
+                <tr>
+                  <td>Task Progression</td><td><code>tp</code></td><td>&uarr;</td><td>fraction</td>
+                  <td>Furthest stage reached, normalized by the number of stages in the task. Partial credit for
+                    partial execution.</td>
+                </tr>
+
+                <tr><td colspan="5" style="background:#f7f8fb; font-weight:700;">Efficiency</td></tr>
+                <tr>
+                  <td>Cartesian Path Length</td><td><code>cpl</code></td><td>&darr;</td><td>m</td>
+                  <td>Total 3D distance travelled by the end-effectors over the episode.</td>
+                </tr>
+                <tr>
+                  <td>Joint Path Length</td><td><code>jpl</code></td><td>&darr;</td><td>rad</td>
+                  <td>Total angular distance moved, summed across all joints of both arms.</td>
+                </tr>
+                <tr>
+                  <td>Orientation Path Length</td><td><code>opl</code></td><td>&darr;</td><td>rad</td>
+                  <td>Integrated end-effector rotation change over the episode.</td>
+                </tr>
+                <tr>
+                  <td>Completion Time</td><td><code>ct</code></td><td>&darr;</td><td>s</td>
+                  <td>Wall-clock task time until termination, in simulated seconds.</td>
+                </tr>
+                <tr>
+                  <td>Trajectory Length</td><td><code>tl</code></td><td>&darr;</td><td>steps</td>
+                  <td>Number of control steps executed before termination.</td>
+                </tr>
+
+                <tr><td colspan="5" style="background:#f7f8fb; font-weight:700;">Bimanual Coordination</td></tr>
+                <tr>
+                  <td>Bimanual Arm Velocity Difference</td><td><code>bavd</code></td><td>&darr;</td><td>m/s</td>
+                  <td>Mean absolute difference in end-effector speed between the two arms. Low values indicate the
+                    arms move as a coordinated pair rather than sequentially.</td>
+                </tr>
+                <tr>
+                  <td>Bimanual Gripper Vertical Difference</td><td><code>bgvd</code></td><td>&darr;</td><td>m</td>
+                  <td>Mean height offset between the two grippers. Matters most for tightly symmetric tasks such as
+                    Lift Tray and Lift Pot, where a tilted carry drops the payload.</td>
+                </tr>
+
+                <tr><td colspan="5" style="background:#f7f8fb; font-weight:700;">Safety &amp; Stability</td></tr>
+                <tr>
+                  <td>Self Collision Count</td><td><code>scc</code></td><td>&darr;</td><td>count</td>
+                  <td>Number of contact events between the robot's own links, including arm-to-arm contacts.</td>
+                </tr>
+                <tr>
+                  <td>Environment Collision Count</td><td><code>ecc</code></td><td>&darr;</td><td>count</td>
+                  <td>Number of unintended contact events between the robot and scene geometry.</td>
+                </tr>
+                <tr>
+                  <td>Slip Count</td><td><code>sc</code></td><td>&darr;</td><td>count</td>
+                  <td>Number of times a grasped object slips or is dropped unintentionally.</td>
+                </tr>
+                <tr>
+                  <td>Mean Joint Jerk</td><td><code>mjj</code></td><td>&darr;</td><td>rad/s&sup3;</td>
+                  <td>Average rate of change of joint acceleration &mdash; smoothness of the commanded motion.</td>
+                </tr>
+                <tr>
+                  <td>Mean Cartesian Jerk</td><td><code>mcj</code></td><td>&darr;</td><td>m/s&sup3;</td>
+                  <td>Average rate of change of end-effector acceleration in 3D.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="re-callout mt-4">
+            <p class="re-callout-title">Behavioral metrics are conditioned on progress</p>
+            <p>
+              A policy that does nothing has excellent path length and zero collisions. To prevent this, efficiency,
+              coordination, and safety metrics are computed over the portion of the episode in which the policy is
+              making progress, and the composite score multiplies behavioral quality by outcome. Standing still cannot
+              win.
+            </p>
+          </div>
+
+          <!-- =================== 3. Ranking & aggregation =================== -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">03</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="ranking">Ranking &amp; Aggregation</h2>
+          </div>
+
+          <h3 class="title is-5">Normalization</h3>
+          <p>
+            Raw metric values are not comparable across tasks &mdash; <em>Stack Single Book Shelf</em> trajectories are
+            three times longer than <em>Lift Pot</em> trajectories. Each behavioral metric is therefore normalized
+            against the <strong>human demonstration distribution</strong> for the same task and variation. A policy
+            whose behavior matches expert statistics scores 1.0 on that metric; one that is markedly worse than the
+            expert trends toward 0. Outcome metrics are already in [0, 1] and are used directly.
+          </p>
+
+          <h3 class="title is-5 mt-5">Composite score</h3>
+          <p>
+            The leaderboard's primary ranking is the <strong>RoboEval Diagnostic Score (RDS)</strong>: the weighted
+            mean of the four family scores, averaged over all 28 variations with equal weight per variation.
+          </p>
+
+          <!-- TODO(organizers): confirm the four family weights before launch. -->
+          <table class="re-spec mt-4">
+            <tbody>
+              <tr><th>Outcome</th><td>50% &mdash; Success 35%, Task Progression 15% &nbsp;<span class="re-tba">(weights TBC)</span></td></tr>
+              <tr><th>Safety &amp; Stability</th><td>20% &nbsp;<span class="re-tba">(TBC)</span></td></tr>
+              <tr><th>Bimanual Coordination</th><td>15% &nbsp;<span class="re-tba">(TBC)</span></td></tr>
+              <tr><th>Efficiency</th><td>15% &nbsp;<span class="re-tba">(TBC)</span></td></tr>
+            </tbody>
+          </table>
+
+          <h3 class="title is-5 mt-5">Tie-breaking</h3>
+          <p>
+            Ties on RDS are broken in order by: (1) mean Success, (2) mean Task Progression, (3) Safety &amp; Stability
+            family score, (4) earlier submission timestamp.
+          </p>
+
+          <h3 class="title is-5 mt-5">Secondary leaderboards</h3>
+          <p>
+            Alongside the aggregate ranking, the site publishes per-family and per-task leaderboards. These do not
+            determine the main prizes, but the Best Coordination award is decided from the coordination family score,
+            and per-task boards are the intended reference for papers reporting on a subset of RoboEval.
+          </p>
+
+          <!-- ===================== 4. Rules & eligibility ===================== -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">04</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="rules">Rules &amp; Eligibility</h2>
+          </div>
+
+          <h3 class="title is-5">Who can enter</h3>
+          <ul>
+            <li>Open to anyone: academic, industrial, and independent participants are all welcome.</li>
+            <li>Teams may be of any size. Each team submits under a single identity.</li>
+            <li>An individual may belong to only one team.</li>
+            <li>Challenge organizers and their immediate research groups may submit entries for reference, but are
+              not eligible for prizes and are marked as such on the leaderboard.</li>
+          </ul>
+
+          <h3 class="title is-5 mt-5">What is allowed</h3>
+          <ul>
+            <li>Any policy architecture, including vision-language-action models, diffusion policies, and
+              classical or hybrid controllers.</li>
+            <li>Any pretraining, including on external robotics datasets and internet-scale corpora.</li>
+            <li>Collecting additional demonstrations yourself with the provided teleoperation tools.</li>
+            <li>Data augmentation, synthetic data generation, and domain randomization during training.</li>
+            <li>Task-conditioned or per-task models, provided the same submission covers all 28 variations.</li>
+            <li>Test-time compute such as sampling and reranking, as long as the declared control frequency is met.</li>
+          </ul>
+
+          <h3 class="title is-5 mt-5">What is not allowed</h3>
+          <ul>
+            <li><strong>Reading privileged simulator state</strong> that is not exposed through the standard
+              observation interface &mdash; ground-truth object poses in an image-only submission, contact flags,
+              or internal solver state.</li>
+            <li><strong>Modifying the environment, task definition, reward, or termination conditions.</strong> The
+              challenge release tag is the reference; local edits to it invalidate a submission.</li>
+            <li><strong>Tuning on the published evaluation seeds.</strong> Use them to sanity-check, not to select
+              checkpoints or hyperparameters.</li>
+            <li><strong>Hard-coding trajectories keyed to specific initial states</strong> rather than learning or
+              computing a policy from observations.</li>
+            <li><strong>Editing the metrics computation</strong> or post-processing <code>results.json</code> by hand.</li>
+            <li><strong>Multiple accounts</strong> used to circumvent the submission limit.</li>
+          </ul>
+
+          <div class="re-callout is-danger">
+            <p class="re-callout-title">Disqualification</p>
+            <p>
+              Submissions that violate these rules are removed from the leaderboard. Where a violation appears
+              accidental, organizers contact the team first and allow a corrected resubmission before the deadline.
+              Deliberate circumvention of the evaluation protocol is disqualifying for the full challenge.
+            </p>
+          </div>
+
+          <h3 class="title is-5 mt-5">Submission limits</h3>
+          <p>
+            <!-- TODO(organizers): confirm the submission cap before launch. -->
+            Each team may submit up to <span class="re-tba">TBC</span> entries. The most recent valid submission is the
+            one ranked; earlier entries remain visible in the team's history. There is no limit on running the
+            evaluation harness locally.
+          </p>
+
+          <!-- ===================== 5. Reproducibility ===================== -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">05</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="reproducibility">Reproducibility Requirements</h2>
+          </div>
+
+          <p>
+            Every submission must be reproducible by the organizers from the artifacts provided. Concretely:
+          </p>
+          <ul>
+            <li>The policy checkpoint must load and run against the pinned challenge release with the declared
+              dependencies.</li>
+            <li>The technical report must state the training data used, the architecture, the action and observation
+              modes, the control frequency, and any test-time compute.</li>
+            <li>Randomness in the policy must be seedable, and the seed must be declared.</li>
+            <li>Total training compute should be reported in GPU-hours. This does not affect ranking; it is collected
+              so the community can compare methods fairly.</li>
+          </ul>
+
+          <p class="mt-4">
+            Full artifact requirements are specified on the
+            <a href="./challenge-submission.html#format">Submission Format</a> page.
+          </p>
+
+          <!-- ===================== 6. Licensing & conduct ===================== -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">06</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="licensing">Licensing &amp; Conduct</h2>
+          </div>
+
+          <p>
+            RoboEval &mdash; the benchmark, assets, and demonstration data &mdash; is released under the MIT License.
+            You retain full ownership of your policy, code, and checkpoints. Submitting grants the organizers
+            permission to run your submission for evaluation and to publish the resulting metrics, your team name, and
+            your method description on the leaderboard and in any workshop report summarizing the challenge.
+          </p>
+          <p>
+            Releasing your code and checkpoints is encouraged and qualifies for the open-source award, but is not
+            required to compete.
+          </p>
+          <p>
+            All participants are expected to follow the
+            <a href="https://corl2026-realworld-robot-learning.github.io/" target="_blank" rel="noopener">CoRL 2026
+              code of conduct</a>. Report concerns to the track organizers at
+            <a href="mailto:yiruwang@cs.washington.edu">yiruwang@cs.washington.edu</a>.
+          </p>
+
+          <div class="re-cta-row mt-6">
+            <a class="re-btn" href="./challenge-submission.html">
+              Next: Submission Guidelines
+              <span class="icon is-small"><i class="fas fa-arrow-right"></i></span>
+            </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="columns is-centered">
+        <div class="column">
+          <div class="content has-text-centered">
+            <p>
+              <a href="./index.html">RoboEval</a> &middot;
+              <a href="./challenge.html">CoRL 2026 Challenge</a> &middot;
+              <a href="https://github.com/Robo-Eval/RoboEval" target="_blank" rel="noopener">GitHub</a> &middot;
+              <a href="https://arxiv.org/pdf/2507.00435" target="_blank" rel="noopener">Paper</a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
