@@ -144,7 +144,7 @@
               </tr>
               <tr>
                 <th>Tasks</th>
-                <td>8 task families &mdash; 28 variations spanning position, rotation, and combined spatial shifts</td>
+                <td>8 task families &mdash; 30 variations spanning position, rotation, and combined spatial shifts</td>
               </tr>
               <tr>
                 <th>Demonstrations</th>
@@ -388,8 +388,8 @@
 
       <p class="is-size-7 has-text-grey mt-2">
         <strong>Pos</strong> = position-only variation &middot; <strong>Rot</strong> = orientation-only variation
-        &middot; <strong>PR</strong> = combined position and rotation. Trajectory length is the mean demonstration
-        length in seconds.
+        &middot; <strong>PR</strong> = combined position and rotation. Traj. Len is the mean demonstration
+        length in control steps at 20&nbsp;Hz.
       </p>
 
       <div class="columns is-variable is-5 mt-5">
@@ -397,17 +397,19 @@
           <h3 class="title is-5">Demonstration data</h3>
           <p>
             Over 3,000 human demonstrations are provided, collected through VR teleoperation on an Oculus Quest and
-            through keyboard teleoperation. Each demonstration includes RGB and depth observations, point clouds,
-            joint positions, object poses, and stage annotations. You may use all of it, a subset, or none of it.
+            through keyboard teleoperation. Each is stored as its reset seed and action trajectory; replaying it in
+            the simulator regenerates proprioception, RGB and depth from any camera, and the stage-level metrics, at
+            any control frequency and in any action mode. You may use all of it, a subset, or none of it.
           </p>
         </div>
         <div class="column is-half">
           <h3 class="title is-5">Observation &amp; action interface</h3>
           <p>
-            Policies interact through the standard RoboEval interface. Action modes cover joint position
-            (absolute or delta) and end-effector Cartesian control, at a configurable control frequency.
-            Observation modes range from full (RGB, depth, point clouds) to lightweight (joint positions, object
-            poses).
+            Actions are joint positions or end-effector poses, absolute or delta, for both arms plus grippers, at
+            a control frequency you choose (20&ndash;500&nbsp;Hz). Observations are proprioception (joint positions
+            and velocities, gripper state) plus RGB and/or depth from any of five cameras: external, head, front,
+            and one on each wrist. You declare the combination in your submission and the evaluator runs exactly
+            that.
           </p>
         </div>
       </div>
@@ -498,33 +500,51 @@
           <ol class="re-steps">
             <li>
               <strong>Install RoboEval</strong>
-              Clone the repository with submodules and install into a clean Python 3.10 environment.
-              <pre class="re-code"><code>git clone --recurse-submodules git@github.com:Robo-Eval/RoboEval.git
+              Clone the repository, check out the challenge release, and install into a clean Python 3.10 environment.
+              <pre class="re-code"><code>git clone https://github.com/Robo-Eval/RoboEval.git
 cd RoboEval
+# TODO(organizers): the release tag is created at launch
+git checkout corl2026-challenge
+git submodule update --init
 
-conda create -n roboeval python=3.10
+conda create -n roboeval python=3.10 -y
 conda activate roboeval
-
 pip install -e ".[examples]"</code></pre>
             </li>
             <li>
               <strong>Verify the installation</strong>
-              Replay a bundled demonstration to confirm the simulator and assets load correctly.
-              <pre class="re-code"><code>python examples/1_data_replay.py</code></pre>
+              Run the evaluator on two episodes with the template policy. It needs no display and finishes in
+              under a minute.
+              <pre class="re-code"><code>export MUJOCO_GL=egl   # on machines without a display
+python -m roboeval.challenge.evaluate --submission examples/challenge_submission \
+    --tasks LiftPot/Static --episodes 2 --output-dir /tmp/roboeval_check --overwrite</code></pre>
+              <p class="is-size-7 has-text-grey mt-2">
+                With a display attached, <code class="re-inline-code">python examples/1_data_replay.py</code> also
+                opens the viewer and replays human demonstrations. Its first run downloads about 1.8&nbsp;GB of demos.
+              </p>
             </li>
             <li>
               <strong>Explore the tasks and data</strong>
               Instantiate an environment and inspect the observation and action interface.
-              <pre class="re-code"><code>from roboeval.envs.lift_pot import LiftPotPositionAndOrientation
+              <pre class="re-code"><code>import numpy as np
+from roboeval.envs.lift_pot import LiftPotPositionAndOrientation
 from roboeval.action_modes import JointPositionActionMode
 from roboeval.robots.configs.panda import BimanualPanda
+from roboeval.utils.observation_config import CameraConfig, ObservationConfig
 
 env = LiftPotPositionAndOrientation(
-    action_mode=JointPositionActionMode(absolute=True, ee=False),
-    render_mode="human",
+    # end-effector delta actions, as in the released dataset
+    action_mode=JointPositionActionMode(absolute=False, ee=True,
+                                        floating_base=True, floating_dofs=[]),
+    observation_config=ObservationConfig(
+        cameras=[CameraConfig(name="head", resolution=(256, 256))]),
+    render_mode=None,          # "human" opens a viewer and needs a display
     control_frequency=20,
     robot_cls=BimanualPanda,
-)</code></pre>
+)
+obs, info = env.reset(seed=1000)
+obs, reward, terminated, truncated, info = env.step(np.zeros(env.action_space.shape))
+print(obs.keys(), info["subtask_progress"])</code></pre>
             </li>
             <li>
               <strong>Train your policy</strong>
@@ -532,15 +552,18 @@ env = LiftPotPositionAndOrientation(
               <a href="./challenge-rules.html#rules">rules</a> for what is and is not permitted.
             </li>
             <li>
-              <strong>Run the evaluation harness</strong>
-              Produce the metrics file that your submission is scored from.
-              <pre class="re-code"><code>python examples/5_gather_metrics.py</code></pre>
+              <strong>Run the evaluation</strong>
+              Copy the template bundle, point <code class="re-inline-code">policy/policy.py</code> at your model,
+              declare your interface in <code class="re-inline-code">metadata.yaml</code>, and run every variation on
+              the official seeds.
+              <pre class="re-code"><code>cp -r examples/challenge_submission ~/submission
+python -m roboeval.challenge.evaluate --submission ~/submission --workers 16 --gpus 0</code></pre>
             </li>
             <li>
               <strong>Submit</strong>
-              Package your checkpoint, <code class="re-inline-code">results.json</code>, and technical report, then
-              submit the link. Full instructions are on the
-              <a href="./challenge-submission.html">Submission Guidelines</a> page.
+              Add your technical report, then validate and package the bundle and submit the link. Full instructions
+              are on the <a href="./challenge-submission.html">Submission Guidelines</a> page.
+              <pre class="re-code"><code>python -m roboeval.challenge.package ~/submission</code></pre>
             </li>
           </ol>
         </div>
@@ -554,6 +577,7 @@ env = LiftPotPositionAndOrientation(
               <li><a href="./challenge-rules.html#ranking">Ranking &amp; aggregation</a></li>
               <li><a href="./challenge-rules.html#rules">Rules &amp; eligibility</a></li>
               <li><a href="./challenge-submission.html#format">Submission format</a></li>
+              <li><a href="./challenge-submission.html#policy">Policy interface</a></li>
               <li><a href="./challenge-submission.html#verification">Verification process</a></li>
               <li><a href="./challenge-submission.html#faq">FAQ</a></li>
             </ol>
@@ -562,8 +586,9 @@ env = LiftPotPositionAndOrientation(
           <div class="re-callout mt-5">
             <p class="re-callout-title">Hardware note</p>
             <p class="is-size-7">
-              RoboEval runs on MuJoCo and evaluates on CPU or a single consumer GPU. VR teleoperation for collecting
-              your own demonstrations additionally requires an Oculus Quest and GLIBC 2.32+.
+              RoboEval runs on Linux with MuJoCo. Proprioception-only policies evaluate on CPU; camera observations
+              are rendered on an NVIDIA GPU through EGL. VR teleoperation for collecting your own demonstrations
+              additionally requires an Oculus Quest and GLIBC 2.32+.
             </p>
           </div>
 

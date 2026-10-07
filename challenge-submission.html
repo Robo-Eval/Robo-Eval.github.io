@@ -98,9 +98,8 @@
         <a class="re-btn is-ghost" href="./challenge-rules.html">
           <span class="icon is-small"><i class="fas fa-arrow-left"></i></span> Evaluation &amp; Rules
         </a>
-        <!-- TODO(organizers): replace href with the live Google Form URL when submissions open. -->
         <a class="re-btn" href="#submit">
-          <span class="icon is-small"><i class="fas fa-paper-plane"></i></span> Submission Form
+          <span class="icon is-small"><i class="fas fa-paper-plane"></i></span> Submission Portal
         </a>
       </div>
     </div>
@@ -116,6 +115,7 @@
             <ol>
               <li><a href="#workflow">Submission workflow</a></li>
               <li><a href="#format">Submission format</a></li>
+              <li><a href="#policy">Policy interface</a></li>
               <li><a href="#results-json">results.json schema</a></li>
               <li><a href="#report">Technical report</a></li>
               <li><a href="#submit">Submitting</a></li>
@@ -142,40 +142,62 @@
             <h2 class="title is-4 mb-0 re-anchor" id="workflow">Submission Workflow</h2>
           </div>
 
+          <p>
+            Three commands ship with the challenge release: <code class="re-inline-code">evaluate</code> runs your
+            policy and writes the logs and metrics, <code class="re-inline-code">validate</code> runs the same
+            automated checks the organizers run, and <code class="re-inline-code">package</code> produces the archive
+            you upload. All of them work from one submission directory.
+          </p>
+
           <ol class="re-steps">
             <li>
-              <strong>Pin the challenge release</strong>
-              Check out the tagged challenge release so your numbers are comparable with everyone else's.
-              <pre class="re-code"><code># TODO(organizers): replace with the real challenge tag at launch
-git fetch --tags
-git checkout corl2026-challenge
-pip install -e ".[examples]"</code></pre>
+              <strong>Install the challenge release</strong>
+              Follow <a href="./challenge.html#getting-started">Getting Started</a>. Evaluate from an unmodified
+              checkout of the release tag: the evaluator records a fingerprint of the benchmark source, and a modified
+              tree fails validation.
             </li>
             <li>
-              <strong>Run the evaluation harness</strong>
-              Evaluate your policy across all 8 task families and 28 variations using the published evaluation seeds.
-              This writes the per-task, per-variation metrics that your ranking is computed from.
-              <pre class="re-code"><code>python examples/5_gather_metrics.py \
-    --policy path/to/your_policy.py \
-    --checkpoint path/to/checkpoint.pt \
-    --output submission/results.json</code></pre>
+              <strong>Start from the template</strong>
+              Copy the template bundle, then fill in <code class="re-inline-code">metadata.yaml</code>, put your
+              weights in <code class="re-inline-code">checkpoint/</code>, and implement
+              <code class="re-inline-code">policy/policy.py</code> (see <a href="#policy">Policy Interface</a>).
+              <pre class="re-code"><code>cp -r examples/challenge_submission ~/submission</code></pre>
+            </li>
+            <li>
+              <strong>Smoke-test on a few episodes</strong>
+              Catches interface and loading errors in about a minute. Partial runs are labelled as such and cannot be
+              submitted.
+              <pre class="re-code"><code>python -m roboeval.challenge.evaluate --submission ~/submission \
+    --tasks LiftPot/Static --episodes 2 --output-dir /tmp/smoke --overwrite</code></pre>
+            </li>
+            <li>
+              <strong>Run the full evaluation</strong>
+              Runs every variation on the official seeds and writes <code class="re-inline-code">logs/</code> and
+              <code class="re-inline-code">results.json</code> into the bundle. Each worker evaluates one variation;
+              <code class="re-inline-code">--gpus</code> spreads rendering across GPUs, and
+              <code class="re-inline-code">--resume</code> continues an interrupted run.
+              <pre class="re-code"><code>python -m roboeval.challenge.evaluate --submission ~/submission --workers 16 --gpus 0,1</code></pre>
               <p class="is-size-7 has-text-grey mt-2">
-                Exact flags follow the challenge release; <code class="re-inline-code">--help</code> is authoritative.
+                For scale, measured with the template policy, which never finishes early (about 560k control steps
+                over the suite): proprioception-only took 8 minutes with 30 CPU workers. Each camera adds about
+                16&nbsp;ms per step and rendering saturates the GPU, so with three cameras the same run projects to
+                about 5 hours on 4 H100s. Policies that succeed early or use fewer cameras take less; your inference
+                time adds to these figures.
               </p>
             </li>
             <li>
-              <strong>Assemble the submission bundle</strong>
-              Collect the checkpoint, metrics, rollout logs, and report into the layout described in
-              <a href="#format">Submission Format</a>.
+              <strong>Write the report, then validate and package</strong>
+              Add <code class="re-inline-code">report.pdf</code>. <code class="re-inline-code">package</code> runs
+              the full validation (including replaying a sample of your logged episodes), writes a checksum manifest,
+              and builds the archive. It refuses to package an invalid bundle.
+              <pre class="re-code"><code>python -m roboeval.challenge.validate ~/submission     # optional: package runs it too
+python -m roboeval.challenge.package ~/submission</code></pre>
             </li>
             <li>
-              <strong>Upload the bundle</strong>
-              Host it somewhere the organizers can download without an account request &mdash; Google Drive,
-              Hugging Face Hub, S3, or an institutional server. Hugging Face is preferred for checkpoints.
-            </li>
-            <li>
-              <strong>Submit the link through the form</strong>
-              One form entry per submission. See <a href="#submit">Submitting</a>.
+              <strong>Upload and submit</strong>
+              Host the archive somewhere the organizers can download without an account request &mdash; Hugging Face
+              Hub (preferred), Google Drive, S3, or an institutional server &mdash; and submit the link and the
+              printed SHA-256 through the <a href="#submit">form</a>.
             </li>
           </ol>
 
@@ -185,39 +207,54 @@ pip install -e ".[examples]"</code></pre>
             <h2 class="title is-4 mb-0 re-anchor" id="format">Submission Format</h2>
           </div>
 
-          <p>Your uploaded bundle must have this structure:</p>
+          <p>The bundle has this structure. Files marked <em>generated</em> are written by the tools; do not create
+            or edit them by hand.</p>
 
           <pre class="re-code"><code>submission/
-├── results.json            # REQUIRED — harness output, see schema below
-├── report.pdf              # REQUIRED — technical report, max 4 pages + refs
-├── metadata.yaml           # REQUIRED — team and method declaration
-├── checkpoint/             # REQUIRED — policy weights, loadable as declared
-│   └── ...
-├── policy/                 # REQUIRED — inference code needed to load and run
-│   ├── policy.py           #            the checkpoint against RoboEval
-│   └── requirements.txt
-└── logs/                   # REQUIRED — raw per-episode evaluation logs
-    └── &lt;Task&gt;_&lt;Variation&gt;/
-        └── episode_&lt;i&gt;.json</code></pre>
+├── metadata.yaml           # you   — team, method, and the interface the evaluator runs
+├── report.pdf              # you   — technical report, max 4 pages + refs
+├── checkpoint/             # you   — policy weights (or set checkpoint_url, see below)
+├── policy/                 # you   — inference code
+│   ├── policy.py           #         defines make_policy(), see Policy Interface
+│   └── requirements.txt    #         pinned extra dependencies
+├── results.json            # generated by evaluate
+├── logs/                   # generated by evaluate
+│   └── &lt;Family&gt;_&lt;Variation&gt;/
+│       ├── episode_&lt;i&gt;.json  # seed, outcome, steps, raw and leaderboard metrics
+│       └── episode_&lt;i&gt;.npz   # the exact actions your policy sent
+└── MANIFEST.sha256         # generated by package</code></pre>
 
           <h3 class="title is-5 mt-5">metadata.yaml</h3>
+          <p>
+            The <code class="re-inline-code">interface</code> block is not just a declaration: the evaluator builds
+            every environment from it, so what you declare is exactly what runs.
+          </p>
           <pre class="re-code"><code>team_name: "Your Team"
-method_name: "YourMethod-v2"
+method_name: "YourMethod-v2"        # as it should appear on the leaderboard
 contact_email: "you@example.edu"
 affiliation: "Your Institution"
 members:
   - "First Author"
   - "Second Author"
-
 roboeval_release: "corl2026-challenge"
-action_mode: "JointPosition(absolute=true, ee=false)"
-observation_mode: "full"          # full | lightweight
-control_frequency: 20             # Hz
-policy_seed: 0
 
+interface:
+  action_mode:
+    absolute: false                 # false = delta actions
+    ee: true                        # true = end-effector pose, false = joint positions
+  control_frequency: 20             # Hz; 20-500 and must divide 500
+  observation:
+    proprioception: true
+    cameras:                        # any of: external, head, front, left_wrist, right_wrist
+      - {name: head,        resolution: [256, 256], rgb: true, depth: false}
+      - {name: left_wrist,  resolution: [256, 256], rgb: true, depth: false}
+      - {name: right_wrist, resolution: [256, 256], rgb: true, depth: false}
+
+policy_seed: 0
+test_time_compute: "none"           # e.g. "8 samples, reranked by value head"
 training_data:
-  roboeval_demos: true            # did you train on the provided demonstrations?
-  additional_demos: 0             # count of self-collected demonstrations
+  roboeval_demos: true              # did you train on the provided demonstrations?
+  additional_demos: 0               # count of self-collected demonstrations
   external_pretraining: "OXE, DROID"   # or "none"
 training_gpu_hours: 128
 
@@ -228,29 +265,67 @@ checkpoint_url: "https://huggingface.co/you/your-method"</code></pre>
           <div class="re-callout is-warning">
             <p class="re-callout-title">Size limits</p>
             <p>
-              Keep the bundle under <span class="re-tba">TBC</span> GB. If your checkpoint is larger, host it
-              separately and reference it from <code class="re-inline-code">metadata.yaml</code> rather than inlining
-              it. Compress <code class="re-inline-code">logs/</code> if needed &mdash; it is usually the largest part.
+              Keep the archive under <span class="re-tba">TBC</span> GB. Logs are small (a few kB per episode), so
+              the checkpoint is almost always what pushes a bundle over. If yours is large, host it separately, set
+              <code class="re-inline-code">checkpoint_url</code>, and package with
+              <code class="re-inline-code">--exclude-checkpoint</code>.
             </p>
           </div>
 
-          <!-- ===================== 3. results.json ===================== -->
+          <!-- =================== 3. Policy interface =================== -->
           <div class="re-section-label mt-6">
             <span class="re-num">03</span>
+            <h2 class="title is-4 mb-0 re-anchor" id="policy">Policy Interface</h2>
+          </div>
+
+          <p>
+            <code class="re-inline-code">policy/policy.py</code> must define
+            <code class="re-inline-code">make_policy(checkpoint_dir, metadata)</code>, returning an object with
+            <code class="re-inline-code">reset</code> and <code class="re-inline-code">act</code>. The evaluator
+            calls <code class="re-inline-code">make_policy</code> once per worker process. Other modules in
+            <code class="re-inline-code">policy/</code> can be imported normally.
+          </p>
+          <pre class="re-code"><code>def make_policy(checkpoint_dir: Path, metadata: dict) -> Policy: ...
+
+class Policy:
+    def reset(self, episode) -> None:
+        # episode.family, .variation, .env_name, .instruction (language goal),
+        # .seed, .policy_seed, .control_frequency, .max_steps, .action_space
+        ...
+
+    def act(self, observation: dict) -> np.ndarray:
+        # observation["proprioception"]           joint positions + velocities, both arms
+        # observation["proprioception_grippers"]  gripper state
+        # observation["rgb_&lt;camera&gt;"]             (3, H, W) uint8, per declared camera
+        # observation["depth_&lt;camera&gt;"]           (H, W) float, if depth: true
+        # returns an action of shape episode.action_space.shape
+        ...</code></pre>
+          <p>
+            Before each episode the evaluator seeds Python's and (if loaded) PyTorch's RNGs from
+            <code class="re-inline-code">policy_seed</code> and the episode seed, so a seeded policy reproduces exactly.
+            An exception in <code class="re-inline-code">act</code> ends that episode as a failure, with the
+            traceback in its log; the run continues.
+          </p>
+
+          <!-- ===================== 4. results.json ===================== -->
+          <div class="re-section-label mt-6">
+            <span class="re-num">04</span>
             <h2 class="title is-4 mb-0 re-anchor" id="results-json">results.json Schema</h2>
           </div>
 
           <p>
-            This file is produced by the harness. Do not edit it by hand &mdash; the verification step re-derives it
-            from your logs and a mismatch invalidates the submission. It is documented here so you can confirm the
-            harness ran over everything it should have.
+            This file is produced by the evaluator from <code class="re-inline-code">logs/</code>. Do not edit it by
+            hand: the consistency check re-derives it from your logs, and the replay check re-runs your logged actions
+            in the simulator. It is documented here so you can confirm the evaluator ran over everything it should have.
           </p>
 
           <pre class="re-code"><code>{
   "roboeval_release": "corl2026-challenge",
+  "harness_version": "1.0.0",
   "method_name": "YourMethod-v2",
   "episodes_per_variation": 50,
-  "seeds": [0, 1, 2, "..."],
+  "seeds": [1000, 1001, 1002, "..."],
+  "interface": { "...": "copied from metadata.yaml" },
 
   "results": {
     "LiftPot": {
@@ -270,8 +345,9 @@ checkpoint_url: "https://huggingface.co/you/your-method"</code></pre>
           "opl":     { "mean": 3.66, "std": 0.71 },
           "scc":     { "mean": 1.12, "std": 0.51 },
           "sc":      { "mean": 0.18, "std": 0.10 },
-          "tl":      { "mean": 601.3, "std": 84.2 }
-        }
+          "tl":      { "mean": 96.2, "std": 12.4 }
+        },
+        "terminations": { "success": 31, "fail": 2, "budget": 17, "unhealthy": 0, "error": 0 }
       },
       "Position":                { "...": "..." },
       "Orientation":             { "...": "..." },
@@ -280,24 +356,27 @@ checkpoint_url: "https://huggingface.co/you/your-method"</code></pre>
 
     "LiftTray":                { "...": "..." },
     "StackTwoBlocks":          { "...": "..." },
-    "StackSingleBookShelf":    { "...": "..." },
+    "StackSingleBookShelf":    { "Static": "...", "Position": "...", "PositionAndOrientation": "..." },
     "CubeHandover":            { "...": "..." },
     "PackBox":                 { "...": "..." },
     "PickSingleBookFromTable": { "...": "..." },
-    "RotateValve":             { "...": "..." }
-  }
+    "RotateValve":             { "Static": "...", "Position": "...", "PositionAndOrientation": "..." }
+  },
+
+  "summary":    { "per_family": { "...": "..." }, "suite": { "...": "..." } },
+  "provenance": { "git_commit": "...", "source_fingerprint": "...", "mujoco_version": "3.3.3", "...": "..." }
 }</code></pre>
 
           <p class="is-size-7 has-text-grey">
             Metric keys match the leaderboard schema in
-            <code class="re-inline-code">static/data/leaderboard_schema.json</code>. Every task family and every
-            variation must be present; a missing entry is scored as zero outcome for that variation rather than
-            excluded from the average.
+            <code class="re-inline-code">static/data/leaderboard_schema.json</code>. Stack Single Book Shelf and Rotate
+            Valve have no orientation-only variation. Every variation must be present: the schema check rejects an
+            incomplete file, so run your policy on every task even where you expect it to score zero.
           </p>
 
           <!-- ======================= 4. Report ======================= -->
           <div class="re-section-label mt-6">
-            <span class="re-num">04</span>
+            <span class="re-num">05</span>
             <h2 class="title is-4 mb-0 re-anchor" id="report">Technical Report</h2>
           </div>
 
@@ -331,65 +410,81 @@ checkpoint_url: "https://huggingface.co/you/your-method"</code></pre>
 
           <!-- ======================= 5. Submitting ======================= -->
           <div class="re-section-label mt-6">
-            <span class="re-num">05</span>
+            <span class="re-num">06</span>
             <h2 class="title is-4 mb-0 re-anchor" id="submit">Submitting</h2>
           </div>
 
           <p>
-            Submissions are made through a Google Form. One entry per submission; the most recent valid entry is the
-            one ranked.
+            Submissions go through the challenge portal, a Hugging Face Space that also hosts the live leaderboard.
+            Sign in with your Hugging Face account, then paste the link to your archive (or upload it) together
+            with the SHA-256 that <code class="re-inline-code">package</code> printed, and confirm you have read the
+            <a href="./challenge-rules.html#rules">rules</a>. Team name, method, and affiliation are read from
+            <code class="re-inline-code">metadata.yaml</code>.
           </p>
 
-          <!-- TODO(organizers): create the Google Form and replace this block with the live link/button. -->
-          <div class="re-callout is-warning">
-            <p class="re-callout-title">Submission form opens at challenge launch</p>
-            <p>
-              The form link will be published here and on the
-              <a href="https://corl2026-realworld-robot-learning.github.io/#challenges" target="_blank"
-                rel="noopener">workshop site</a>. Until then, direct questions to
-              <a href="mailto:yiruwang@cs.washington.edu">yiruwang@cs.washington.edu</a>.
-            </p>
+          <!-- TODO(organizers): replace href with the deployed Space URL. -->
+          <div class="re-cta-row mt-4">
+            <a class="re-btn" href="https://huggingface.co/spaces/NAMESPACE/roboeval-challenge" target="_blank"
+              rel="noopener">
+              <span class="icon is-small"><i class="fas fa-paper-plane"></i></span> Open the submission portal
+            </a>
           </div>
 
-          <p>The form collects:</p>
-          <ul>
-            <li>Team name, contact email, and affiliation</li>
-            <li>Method name as it should appear on the leaderboard</li>
-            <li>Download link to your submission bundle</li>
-            <li>Whether you are opting into the open-source award</li>
-            <li>Confirmation that you have read and followed the <a href="./challenge-rules.html#rules">rules</a></li>
-          </ul>
-
-          <p>
-            You receive an acknowledgment within <span class="re-tba">TBC</span> business days. Leaderboard entries
-            appear after the automated schema check passes.
+          <p class="mt-4">
+            The portal validates every submission on the spot, with the same checks as
+            <code class="re-inline-code">validate</code>, and shows you the report within a few minutes. Accepted
+            submissions appear on the leaderboard immediately; the most recent accepted submission is the one ranked.
+            Bundles that fail the automated checks are not counted toward your submission limit, so fix and resubmit.
           </p>
+          <ul>
+            <li>Each team submits from one Hugging Face account, and each account belongs to one team. The first
+              accepted submission links them.</li>
+            <li>Each team may submit up to <span class="re-tba">TBC</span> times per day.</li>
+            <li>Host the archive somewhere it downloads without signing in, such as a public Hugging Face repo. The
+              portal keeps a copy for verification.</li>
+          </ul>
 
           <!-- ======================= 6. Verification ======================= -->
           <div class="re-section-label mt-6">
-            <span class="re-num">06</span>
+            <span class="re-num">07</span>
             <h2 class="title is-4 mb-0 re-anchor" id="verification">Verification</h2>
           </div>
 
-          <p>Every submission goes through two checks, and leading submissions go through a third.</p>
+          <p>Every submission goes through two automated checks, and prize-eligible submissions go through a third.
+            The automated checks are the ones <code class="re-inline-code">python -m roboeval.challenge.validate</code>
+            runs, so a bundle that validates locally passes them on receipt.</p>
+
+          <div class="re-callout">
+            <p class="re-callout-title">Evaluate on x86-64 Linux</p>
+            <p>
+              Replay is exact only when the floating-point environment matches. The tools pin it automatically
+              (one OpenBLAS kernel, one thread), so run them on an x86-64 Linux machine with AVX2, using NumPy from
+              <code class="re-inline-code">pip</code> as the install does. Submissions evaluated elsewhere, for example
+              on Apple silicon, are held for organizer review rather than accepted automatically.
+            </p>
+          </div>
 
           <table class="re-spec mt-4">
             <tbody>
               <tr>
                 <th>1. Schema check</th>
-                <td>Automated. Confirms <code class="re-inline-code">results.json</code> is well-formed, covers all 28
-                  variations, and is consistent with the per-episode logs. Runs on submission; failures are reported
-                  back so you can fix and resubmit.</td>
+                <td>Automated. Confirms the bundle layout and <code class="re-inline-code">metadata.yaml</code>, and
+                  that <code class="re-inline-code">results.json</code> covers all 30 variations and all 14 metrics on
+                  the official seeds, from an unmodified release. Runs on submission; failures are reported back so
+                  you can fix and resubmit.</td>
               </tr>
               <tr>
                 <th>2. Consistency check</th>
-                <td>Automated. Recomputes metrics from <code class="re-inline-code">logs/</code> and compares against
-                  the reported aggregates. Divergence beyond floating-point tolerance is flagged for manual review.</td>
+                <td>Automated. Re-derives every aggregate in <code class="re-inline-code">results.json</code> from
+                  <code class="re-inline-code">logs/</code>, then replays a random sample of logged episodes' actions
+                  in the simulator and requires the same outcome and metrics. This needs no checkpoint. Divergence
+                  beyond floating-point tolerance is flagged for manual review.</td>
               </tr>
               <tr>
                 <th>3. Held-out re-run</th>
-                <td>Manual, for prize-eligible entries. Organizers load your checkpoint and re-evaluate on an
-                  unpublished seed set. Results must hold up within normal run-to-run variance.</td>
+                <td>Manual, for prize-eligible entries. Organizers run the same evaluator on your bundle with an
+                  unpublished seed set (<code class="re-inline-code">--seeds-file</code>). Results must hold up within
+                  normal run-to-run variance.</td>
               </tr>
             </tbody>
           </table>
@@ -403,7 +498,7 @@ checkpoint_url: "https://huggingface.co/you/your-method"</code></pre>
 
           <!-- ========================== 7. FAQ ========================== -->
           <div class="re-section-label mt-6">
-            <span class="re-num">07</span>
+            <span class="re-num">08</span>
             <h2 class="title is-4 mb-0 re-anchor" id="faq">FAQ</h2>
           </div>
 
@@ -413,19 +508,24 @@ checkpoint_url: "https://huggingface.co/you/your-method"</code></pre>
               data, or fine-tune a pretrained model. Just declare what you used.</p>
 
             <p class="has-text-weight-bold mb-1 mt-4">Can I submit a separate model per task?</p>
-            <p>Yes, as long as one submission bundle covers all 28 variations and the report says so. A generalist
-              policy is not required, though we expect it to be discussed in the report.</p>
+            <p>Yes. <code class="re-inline-code">make_policy</code> is called once per worker, and
+              <code class="re-inline-code">reset</code> tells your policy the family and variation of every episode,
+              so <code class="re-inline-code">policy.py</code> can dispatch to per-task models. One bundle must still
+              cover all 30 variations, and the report should say so. A generalist policy is not required, though we
+              expect it to be discussed in the report.</p>
 
             <p class="has-text-weight-bold mb-1 mt-4">Can I use ground-truth object poses?</p>
-            <p>Only if you declare the <code class="re-inline-code">lightweight</code> observation mode, which exposes
-              joint positions and object poses through the standard interface. Reading state the mode does not expose
-              is a rules violation. Submissions are grouped by observation mode on the leaderboard so image-based and
-              state-based methods are comparable.</p>
+            <p>No. The challenge interface exposes proprioception and camera images only; object poses are not part
+              of any observation. Reading them, or any other simulator state, from inside your policy is a rules
+              violation. Submissions are grouped on the leaderboard by whether they use cameras, so image-based and
+              proprioception-only methods are compared separately.</p>
 
-            <p class="has-text-weight-bold mb-1 mt-4">My policy runs slower than 20&nbsp;Hz. Is that a problem?</p>
-            <p>No. Declare your actual control frequency in <code class="re-inline-code">metadata.yaml</code>. The
-              simulator steps at the declared rate, so a slower policy does not get free extra time within an episode,
-              but it is not disqualified either. Completion Time and Trajectory Length will reflect the difference.</p>
+            <p class="has-text-weight-bold mb-1 mt-4">My policy's inference is slower than 20&nbsp;Hz. Is that a problem?</p>
+            <p>No. Evaluation is not real-time: simulated time advances only when your policy returns an action, so
+              inference speed affects how long the evaluation takes, not your score. What matters is the
+              <code class="re-inline-code">control_frequency</code> in <code class="re-inline-code">metadata.yaml</code>
+              &mdash; the rate at which actions are applied. Step budgets are fixed in simulated seconds, so a lower
+              control frequency gets fewer decisions per episode.</p>
 
             <p class="has-text-weight-bold mb-1 mt-4">Can I update my submission after the deadline?</p>
             <p>Only to fix a reproducibility problem the organizers raise during verification. You cannot change the
