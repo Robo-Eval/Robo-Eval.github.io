@@ -265,7 +265,7 @@ checkpoint_url: "https://huggingface.co/you/your-method"</code></pre>
           <div class="re-callout is-warning">
             <p class="re-callout-title">Size limits</p>
             <p>
-              Keep the archive under <span class="re-tba">TBC</span> GB. Logs are small (a few kB per episode), so
+              Keep the archive under 5 GB. Logs are small (a few kB per episode), so
               the checkpoint is almost always what pushes a bundle over. If yours is large, host it separately, set
               <code class="re-inline-code">checkpoint_url</code>, and package with
               <code class="re-inline-code">--exclude-checkpoint</code>.
@@ -438,7 +438,7 @@ class Policy:
           <ul>
             <li>Each team submits from one Hugging Face account, and each account belongs to one team. The first
               accepted submission links them.</li>
-            <li>Each team may submit up to <span class="re-tba">TBC</span> times per day.</li>
+            <li>Each team may submit up to 2 times per day (UTC).</li>
             <li>Host the archive somewhere it downloads without signing in, such as a public Hugging Face repo. The
               portal keeps a copy for verification.</li>
           </ul>

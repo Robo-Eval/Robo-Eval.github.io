@@ -130,9 +130,10 @@
           <div class="re-callout">
             <p class="re-callout-title">Protocol status</p>
             <p>
-              The structure below is final. Exact numeric settings marked
-              <span class="re-tba">TBC</span> (episode counts, evaluation seeds, and scoring weights) are confirmed
-              when the challenge launches, and the launch announcement is authoritative if the two ever disagree.
+              The structure below is final. Episode counts, evaluation seeds, and step budgets are fixed in the
+              <code class="re-inline-code">corl2026-challenge</code> release. Scoring weights marked
+              <span class="re-tba">TBC</span> are confirmed when the challenge launches, and the launch announcement
+              is authoritative if the two ever disagree.
             </p>
           </div>
 
@@ -149,7 +150,6 @@
             task&ndash;variation pair is run for a fixed number of independent episodes with fixed evaluation seeds.
           </p>
 
-          <!-- TODO(organizers): confirm episode count and seed set before launch. -->
           <table class="re-spec mt-4">
             <tbody>
               <tr>
@@ -162,12 +162,11 @@
               </tr>
               <tr>
                 <th>Episodes per variation</th>
-                <td>50 <span class="re-tba">TBC</span> &mdash; identical for every submission</td>
+                <td>50 &mdash; identical for every submission</td>
               </tr>
               <tr>
                 <th>Evaluation seeds</th>
-                <td>1000&ndash;1049 <span class="re-tba">TBC</span> &mdash; published as a fixed list at launch and built
-                  into the evaluator</td>
+                <td>1000&ndash;1049 &mdash; a fixed list built into the evaluator</td>
               </tr>
               <tr>
                 <th>Episode termination</th>
@@ -178,7 +177,7 @@
                 <th>Step budget</th>
                 <td>Simulated seconds per family, independent of control frequency: Lift Pot 10, Lift Tray 10,
                   Pick Book From Table 15, Stack Two Cubes 20, Cube Handover 20, Pack Box 20, Rotate Valve 20,
-                  Stack Single Book Shelf 40 <span class="re-tba">TBC</span>. About 1.5&times; the slowest variation's
+                  Stack Single Book Shelf 40. About 1.5&times; the slowest variation's
                   95th-percentile human demonstration.</td>
               </tr>
               <tr>
@@ -427,8 +426,8 @@
 
           <h3 class="title is-5 mt-5">Submission limits</h3>
           <p>
-            <!-- TODO(organizers): confirm the submission cap before launch. -->
-            Each team may submit up to <span class="re-tba">TBC</span> entries. The most recent valid submission is the
+            Each team may submit up to 2 entries per day (UTC); submissions rejected by the automated checks do not
+            count. The most recent valid submission is the
             one ranked; earlier entries remain visible in the team's history. There is no limit on running the
             evaluation harness locally.
           </p>
