@@ -359,8 +359,9 @@
           <p>
             Raw metric values are not comparable across tasks &mdash; <em>Stack Single Book Shelf</em> trajectories are
             three times longer than <em>Lift Pot</em> trajectories. Each behavioral metric is therefore scored against a
-            <strong>human reference</strong>: the median of that metric over the successful human demonstrations of
-            the same task, replayed under the challenge rules (20&nbsp;Hz, same step budget, stopping at success). A
+            <strong>human reference</strong>: the median of that metric over the human demonstrations of the same
+            task in the training dataset (<code class="re-inline-code">roboeval_ee_delta_20hz_scaled</code>) that
+            succeed when replayed under the challenge rules (20&nbsp;Hz, same step budget, stopping at success). A
             value at or better than the reference scores 1. A worse value <em>v</em> against reference <em>r</em>
             scores (<em>r</em>&nbsp;+&nbsp;<em>c</em>)&nbsp;/&nbsp;(<em>v</em>&nbsp;+&nbsp;<em>c</em>), about 0.5 at twice
             the reference, where <em>c</em> is 10% of the reference (at least one event for collision and slip counts). A
