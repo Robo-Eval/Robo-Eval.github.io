@@ -130,10 +130,9 @@
           <div class="re-callout">
             <p class="re-callout-title">Protocol status</p>
             <p>
-              The structure below is final. Episode counts, evaluation seeds, and step budgets are fixed in the
-              <code class="re-inline-code">corl2026-challenge</code> release. Scoring weights marked
-              <span class="re-tba">TBC</span> are confirmed when the challenge launches, and the launch announcement
-              is authoritative if the two ever disagree.
+              The protocol below is final. Episode counts, evaluation seeds, step budgets, and the scoring formula
+              are fixed in the <code class="re-inline-code">corl2026-challenge</code> release; if this page and the
+              release ever disagree, the release is authoritative.
             </p>
           </div>
 
@@ -328,8 +327,8 @@
             <p class="re-callout-title">Behavioral metrics are gated by outcome</p>
             <p>
               Behavioral metrics are computed over the whole episode, so a policy that does nothing has excellent path
-              length and zero collisions. The composite score therefore multiplies behavioral quality by outcome.
-              Standing still cannot win.
+              length and zero collisions. The score therefore weights behavior by outcome (see
+              <a href="#ranking">Ranking</a>): standing still scores 0.
             </p>
           </div>
 
@@ -339,30 +338,46 @@
             <h2 class="title is-4 mb-0 re-anchor" id="ranking">Ranking &amp; Aggregation</h2>
           </div>
 
-          <h3 class="title is-5">Normalization</h3>
           <p>
-            Raw metric values are not comparable across tasks &mdash; <em>Stack Single Book Shelf</em> trajectories are
-            three times longer than <em>Lift Pot</em> trajectories. Each behavioral metric is therefore normalized
-            against the <strong>human demonstration distribution</strong> for the same task and variation. A policy
-            whose behavior matches expert statistics scores 1.0 on that metric; one that is markedly worse than the
-            expert trends toward 0. Outcome metrics are already in [0, 1] and are used directly.
+            The leaderboard ranks submissions by the <strong>RoboEval Diagnostic Score (RDS)</strong>, a number
+            between 0 and 1 that combines outcome with how well the policy behaved. It is computed per task from the
+            task's mean metrics and then averaged over the 8 tasks with equal weight. The evaluator prints it, and
+            <code class="re-inline-code">results.json</code> contains it, so you can see your score before submitting.
           </p>
 
-          <h3 class="title is-5 mt-5">Composite score</h3>
-          <p>
-            The leaderboard's primary ranking is the <strong>RoboEval Diagnostic Score (RDS)</strong>: the weighted
-            mean of the four family scores, averaged over the 8 evaluated tasks with equal weight per task.
-          </p>
-
-          <!-- TODO(organizers): confirm the four family weights before launch. -->
+          <h3 class="title is-5 mt-5">Weights</h3>
           <table class="re-spec mt-4">
             <tbody>
-              <tr><th>Outcome</th><td>50% &mdash; Success 35%, Task Progression 15% &nbsp;<span class="re-tba">(weights TBC)</span></td></tr>
-              <tr><th>Safety &amp; Stability</th><td>20% &nbsp;<span class="re-tba">(TBC)</span></td></tr>
-              <tr><th>Bimanual Coordination</th><td>15% &nbsp;<span class="re-tba">(TBC)</span></td></tr>
-              <tr><th>Efficiency</th><td>15% &nbsp;<span class="re-tba">(TBC)</span></td></tr>
+              <tr><th>Outcome</th><td>40% &mdash; outcome score = 0.7 &times; Success + 0.3 &times; Task Progression</td></tr>
+              <tr><th>Safety &amp; Stability</th><td>30% &mdash; SCC, ECC, SC, MJJ, MCJ</td></tr>
+              <tr><th>Efficiency</th><td>20% &mdash; CPL, JPL, OPL, CT (TL is CT &times; 20 at the fixed rate and is not counted again)</td></tr>
+              <tr><th>Bimanual Coordination</th><td>10% &mdash; BAVD, BGVD</td></tr>
             </tbody>
           </table>
+
+          <h3 class="title is-5 mt-5">Normalizing behavior against humans</h3>
+          <p>
+            Raw metric values are not comparable across tasks &mdash; <em>Stack Single Book Shelf</em> trajectories are
+            three times longer than <em>Lift Pot</em> trajectories. Each behavioral metric is therefore scored against a
+            <strong>human reference</strong>: the median of that metric over the successful human demonstrations of
+            the same task, replayed under the challenge rules (20&nbsp;Hz, same step budget, stopping at success). A
+            value at or better than the reference scores 1. A worse value <em>v</em> against reference <em>r</em>
+            scores (<em>r</em>&nbsp;+&nbsp;<em>c</em>)&nbsp;/&nbsp;(<em>v</em>&nbsp;+&nbsp;<em>c</em>), about 0.5 at twice
+            the reference, where <em>c</em> is 10% of the reference, or one event for collision and slip counts. A
+            family's score is the mean of its metrics' scores. The references ship with the release in
+            <code class="re-inline-code">roboeval/challenge/human_reference.json</code>.
+          </p>
+
+          <h3 class="title is-5 mt-5">Combining outcome and behavior</h3>
+          <p>
+            For each task, with outcome score <em>O</em> and family scores <em>S</em> (safety), <em>E</em> (efficiency)
+            and <em>C</em> (coordination):
+          </p>
+          <pre class="re-code"><code>task score = 0.4 &times; O + O &times; (0.3 &times; S + 0.2 &times; E + 0.1 &times; C)</code></pre>
+          <p>
+            Behavior counts in proportion to outcome. A policy that does nothing has spotless path lengths and no
+            collisions but scores 0; one that always succeeds with human-level behavior scores 1.
+          </p>
 
           <h3 class="title is-5 mt-5">Tie-breaking</h3>
           <p>
@@ -372,11 +387,10 @@
 
           <h3 class="title is-5 mt-5">Secondary leaderboards</h3>
           <p>
-            Alongside the aggregate ranking, the portal shows a leaderboard for each task and views by metric
-            family, and can filter entries by observation mode (camera-based or proprioception-only) and action
-            mode. These do not determine the main prizes, but the Best Coordination award is decided from the
-            coordination family score, and per-task boards are the intended reference for papers reporting on a
-            subset of RoboEval.
+            Alongside the overall ranking, the portal shows the RDS for each task and views by metric family, and can
+            filter entries by observation mode (camera-based or proprioception-only) and action mode. Prizes follow
+            the overall ranking only; per-task boards are the intended reference for papers reporting on a subset of
+            RoboEval.
           </p>
 
           <!-- ===================== 4. Rules & eligibility ===================== -->
