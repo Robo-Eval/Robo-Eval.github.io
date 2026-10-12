@@ -406,8 +406,8 @@
         <div class="column is-half">
           <h3 class="title is-5">Observation &amp; action interface</h3>
           <p>
-            Actions are joint positions or end-effector poses, absolute or delta, for both arms plus grippers, at
-            a control frequency you choose (20&ndash;500&nbsp;Hz). Observations are proprioception (joint positions
+            Actions are joint positions or end-effector poses, absolute or delta, for both arms plus grippers,
+            applied at 20&nbsp;Hz, with the same joint speed limit in every mode. Observations are proprioception (joint positions
             and velocities, gripper state) plus RGB and/or depth from any of five cameras: external, head, front,
             and one on each wrist. You declare the combination in your submission and the evaluator runs exactly
             that.

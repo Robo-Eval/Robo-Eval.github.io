@@ -183,8 +183,13 @@
               </tr>
               <tr>
                 <th>Control frequency</th>
-                <td>20&nbsp;Hz default. Any rate from 20 to 500&nbsp;Hz that divides 500 may be declared in
-                  <code class="re-inline-code">metadata.yaml</code>; the evaluator runs at the declared rate.</td>
+                <td>Fixed at 20&nbsp;Hz for every submission, matching the released dataset. Collision and slip
+                  counts and jerk depend on the control rate, so a common rate keeps them comparable.</td>
+              </tr>
+              <tr>
+                <th>Action modes</th>
+                <td>Joint positions or end-effector poses, absolute or delta. Every mode is held to the same joint
+                  speed limit (2.175&nbsp;rad/s), so no mode can move the arms faster than another.</td>
               </tr>
               <tr>
                 <th>Simulator</th>
@@ -367,9 +372,11 @@
 
           <h3 class="title is-5 mt-5">Secondary leaderboards</h3>
           <p>
-            Alongside the aggregate ranking, the site publishes per-family and per-task leaderboards. These do not
-            determine the main prizes, but the Best Coordination award is decided from the coordination family score,
-            and per-task boards are the intended reference for papers reporting on a subset of RoboEval.
+            Alongside the aggregate ranking, the portal shows a leaderboard for each task and views by metric
+            family, and can filter entries by observation mode (camera-based or proprioception-only) and action
+            mode. These do not determine the main prizes, but the Best Coordination award is decided from the
+            coordination family score, and per-task boards are the intended reference for papers reporting on a
+            subset of RoboEval.
           </p>
 
           <!-- ===================== 4. Rules & eligibility ===================== -->

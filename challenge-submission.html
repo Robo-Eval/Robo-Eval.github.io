@@ -242,7 +242,7 @@ interface:
   action_mode:
     absolute: false                 # false = delta actions
     ee: true                        # true = end-effector pose, false = joint positions
-  control_frequency: 20             # Hz; 20-500 and must divide 500
+  control_frequency: 20             # Hz; fixed at 20 for the challenge
   observation:
     proprioception: true
     cameras:                        # any of: external, head, front, left_wrist, right_wrist
@@ -518,10 +518,9 @@ class Policy:
 
             <p class="has-text-weight-bold mb-1 mt-4">My policy's inference is slower than 20&nbsp;Hz. Is that a problem?</p>
             <p>No. Evaluation is not real-time: simulated time advances only when your policy returns an action, so
-              inference speed affects how long the evaluation takes, not your score. What matters is the
-              <code class="re-inline-code">control_frequency</code> in <code class="re-inline-code">metadata.yaml</code>
-              &mdash; the rate at which actions are applied. Step budgets are fixed in simulated seconds, so a lower
-              control frequency gets fewer decisions per episode.</p>
+              inference speed affects how long the evaluation takes, not your score. Actions are applied at a
+              fixed 20&nbsp;Hz for every submission. If your policy predicts action chunks, it can execute several
+              actions per inference call.</p>
 
             <p class="has-text-weight-bold mb-1 mt-4">Can I update my submission after the deadline?</p>
             <p>Only to fix a reproducibility problem the organizers raise during verification. You cannot change the
