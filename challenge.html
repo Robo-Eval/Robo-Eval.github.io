@@ -144,7 +144,7 @@
               </tr>
               <tr>
                 <th>Tasks</th>
-                <td>8 task families &mdash; 30 variations spanning position, rotation, and combined spatial shifts</td>
+                <td>8 task families, each evaluated on its combined position + orientation variant; demonstrations cover every variant</td>
               </tr>
               <tr>
                 <th>Demonstrations</th>
@@ -299,8 +299,8 @@
           <div class="re-feature">
             <span class="re-feature-icon"><i class="fas fa-arrows-alt"></i></span>
             <h4>Systematic variation</h4>
-            <p>Each task family ships position, rotation, and combined variants that probe spatial generalization
-              rather than memorization of a fixed scene.</p>
+            <p>Each task is evaluated on its combined position + orientation variant, so object poses change in
+              every episode and a policy must generalize spatially rather than memorize a fixed scene.</p>
           </div>
         </div>
         <div class="column is-half-tablet is-one-quarter-desktop">
@@ -333,8 +333,9 @@
 
       <p class="mb-4">
         The challenge uses the RoboEval task suite: everyday bimanual activities drawn from service, warehouse, and
-        industrial settings, each paired with expert demonstrations and stage annotations. Every task family is
-        evaluated across its variations.
+        industrial settings, each paired with expert demonstrations and stage annotations. The challenge evaluates
+        every task family on its <strong>PR</strong> (combined position and rotation) variant; demonstrations from
+        all variants listed below may be used for training.
       </p>
 
       <div class="table-container">
@@ -516,7 +517,7 @@ pip install -e ".[examples]"</code></pre>
               under a minute.
               <pre class="re-code"><code>export MUJOCO_GL=egl   # on machines without a display
 python -m roboeval.challenge.evaluate --submission examples/challenge_submission \
-    --tasks LiftPot/Static --episodes 2 --output-dir /tmp/roboeval_check --overwrite</code></pre>
+    --tasks LiftPot --episodes 2 --output-dir /tmp/roboeval_check --overwrite</code></pre>
               <p class="is-size-7 has-text-grey mt-2">
                 With a display attached, <code class="re-inline-code">python examples/1_data_replay.py</code> also
                 opens the viewer and replays human demonstrations. Its first run downloads about 1.8&nbsp;GB of demos.
@@ -553,7 +554,7 @@ print(obs.keys(), info["subtask_progress"])</code></pre>
             <li>
               <strong>Run the evaluation</strong>
               Copy the template bundle, point <code class="re-inline-code">policy/policy.py</code> at your model,
-              declare your interface in <code class="re-inline-code">metadata.yaml</code>, and run every variation on
+              declare your interface in <code class="re-inline-code">metadata.yaml</code>, and run all 8 tasks on
               the official seeds.
               <pre class="re-code"><code>cp -r examples/challenge_submission ~/submission
 python -m roboeval.challenge.evaluate --submission ~/submission --workers 16 --gpus 0</code></pre>

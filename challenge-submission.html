@@ -168,21 +168,21 @@
               Catches interface and loading errors in about a minute. Partial runs are labelled as such and cannot be
               submitted.
               <pre class="re-code"><code>python -m roboeval.challenge.evaluate --submission ~/submission \
-    --tasks LiftPot/Static --episodes 2 --output-dir /tmp/smoke --overwrite</code></pre>
+    --tasks LiftPot --episodes 2 --output-dir /tmp/smoke --overwrite</code></pre>
             </li>
             <li>
               <strong>Run the full evaluation</strong>
-              Runs every variation on the official seeds and writes <code class="re-inline-code">logs/</code> and
-              <code class="re-inline-code">results.json</code> into the bundle. Each worker evaluates one variation;
+              Runs all 8 tasks on the official seeds and writes <code class="re-inline-code">logs/</code> and
+              <code class="re-inline-code">results.json</code> into the bundle. Each worker evaluates one task;
               <code class="re-inline-code">--gpus</code> spreads rendering across GPUs, and
               <code class="re-inline-code">--resume</code> continues an interrupted run.
               <pre class="re-code"><code>python -m roboeval.challenge.evaluate --submission ~/submission --workers 16 --gpus 0,1</code></pre>
               <p class="is-size-7 has-text-grey mt-2">
-                For scale, measured with the template policy, which never finishes early (about 560k control steps
-                over the suite): proprioception-only took 8 minutes with 30 CPU workers. Each camera adds about
-                16&nbsp;ms per step and rendering saturates the GPU, so with three cameras the same run projects to
-                about 5 hours on 4 H100s. Policies that succeed early or use fewer cameras take less; your inference
-                time adds to these figures.
+                For scale, measured with the template policy, which never finishes early (about 155k control steps
+                over the 8 tasks): proprioception-only took 7 minutes with 8 CPU workers, set by the longest task.
+                Each camera adds about 16&nbsp;ms per step and rendering saturates the GPU, so with three cameras the
+                same run projects to about 1.5 hours on 4 H100s. Policies that succeed early or use fewer cameras take
+                less; your inference time adds to these figures.
               </p>
             </li>
             <li>
@@ -329,7 +329,7 @@ class Policy:
 
   "results": {
     "LiftPot": {
-      "Static": {
+      "PositionAndOrientation": {
         "episodes": 50,
         "metrics": {
           "success": { "mean": 0.62, "std": 0.11 },
@@ -348,19 +348,16 @@ class Policy:
           "tl":      { "mean": 96.2, "std": 12.4 }
         },
         "terminations": { "success": 31, "fail": 2, "budget": 17, "unhealthy": 0, "error": 0 }
-      },
-      "Position":                { "...": "..." },
-      "Orientation":             { "...": "..." },
-      "PositionAndOrientation":  { "...": "..." }
+      }
     },
 
     "LiftTray":                { "...": "..." },
     "StackTwoBlocks":          { "...": "..." },
-    "StackSingleBookShelf":    { "Static": "...", "Position": "...", "PositionAndOrientation": "..." },
+    "StackSingleBookShelf":    { "PositionAndOrientation": { "...": "..." } },
     "CubeHandover":            { "...": "..." },
     "PackBox":                 { "...": "..." },
     "PickSingleBookFromTable": { "...": "..." },
-    "RotateValve":             { "Static": "...", "Position": "...", "PositionAndOrientation": "..." }
+    "RotateValve":             { "PositionAndOrientation": { "...": "..." } }
   },
 
   "summary":    { "per_family": { "...": "..." }, "suite": { "...": "..." } },
@@ -369,9 +366,9 @@ class Policy:
 
           <p class="is-size-7 has-text-grey">
             Metric keys match the leaderboard schema in
-            <code class="re-inline-code">static/data/leaderboard_schema.json</code>. Stack Single Book Shelf and Rotate
-            Valve have no orientation-only variation. Every variation must be present: the schema check rejects an
-            incomplete file, so run your policy on every task even where you expect it to score zero.
+            <code class="re-inline-code">static/data/leaderboard_schema.json</code>. Each family has one entry, its
+            <code class="re-inline-code">PositionAndOrientation</code> variant. All 8 must be present: the schema check
+            rejects an incomplete file, so run your policy on every task even where you expect it to score zero.
           </p>
 
           <!-- ======================= 4. Report ======================= -->
@@ -468,7 +465,7 @@ class Policy:
               <tr>
                 <th>1. Schema check</th>
                 <td>Automated. Confirms the bundle layout and <code class="re-inline-code">metadata.yaml</code>, and
-                  that <code class="re-inline-code">results.json</code> covers all 30 variations and all 14 metrics on
+                  that <code class="re-inline-code">results.json</code> covers all 8 tasks and all 14 metrics on
                   the official seeds, from an unmodified release. Runs on submission; failures are reported back so
                   you can fix and resubmit.</td>
               </tr>
@@ -510,7 +507,7 @@ class Policy:
             <p>Yes. <code class="re-inline-code">make_policy</code> is called once per worker, and
               <code class="re-inline-code">reset</code> tells your policy the family and variation of every episode,
               so <code class="re-inline-code">policy.py</code> can dispatch to per-task models. One bundle must still
-              cover all 30 variations, and the report should say so. A generalist policy is not required, though we
+              cover all 8 tasks, and the report should say so. A generalist policy is not required, though we
               expect it to be discussed in the report.</p>
 
             <p class="has-text-weight-bold mb-1 mt-4">Can I use ground-truth object poses?</p>

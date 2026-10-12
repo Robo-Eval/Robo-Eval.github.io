@@ -145,7 +145,8 @@
 
           <h3 class="title is-5">What gets run</h3>
           <p>
-            Every submission is evaluated on <strong>all 8 task families across all 30 variations</strong>. There is no
+            Every submission is evaluated on <strong>all 8 task families</strong>, each on its combined position +
+            orientation variant. There is no
             task selection: a policy that is excellent on two families and absent on six will rank poorly. Each
             task&ndash;variation pair is run for a fixed number of independent episodes with fixed evaluation seeds.
           </p>
@@ -158,7 +159,7 @@
               </tr>
               <tr>
                 <th>Variations</th>
-                <td>30 (all mandatory)</td>
+                <td>Position + orientation (PR) of each family; 8 in total, all mandatory</td>
               </tr>
               <tr>
                 <th>Episodes per variation</th>
@@ -345,7 +346,7 @@
           <h3 class="title is-5 mt-5">Composite score</h3>
           <p>
             The leaderboard's primary ranking is the <strong>RoboEval Diagnostic Score (RDS)</strong>: the weighted
-            mean of the four family scores, averaged over all 30 variations with equal weight per variation.
+            mean of the four family scores, averaged over the 8 evaluated tasks with equal weight per task.
           </p>
 
           <!-- TODO(organizers): confirm the four family weights before launch. -->
@@ -393,7 +394,7 @@
             <li>Any pretraining, including on external robotics datasets and internet-scale corpora.</li>
             <li>Collecting additional demonstrations yourself with the provided teleoperation tools.</li>
             <li>Data augmentation, synthetic data generation, and domain randomization during training.</li>
-            <li>Task-conditioned or per-task models, provided the same submission covers all 30 variations.</li>
+            <li>Task-conditioned or per-task models, provided the same submission covers all 8 tasks.</li>
             <li>Test-time compute such as sampling and reranking, declared in
               <code class="re-inline-code">metadata.yaml</code>. Evaluation is not real-time, so inference speed does
               not affect scores.</li>
