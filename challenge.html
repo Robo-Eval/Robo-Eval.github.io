@@ -152,7 +152,8 @@
               </tr>
               <tr>
                 <th>Scored on</th>
-                <td>Outcome, Efficiency, Bimanual Coordination, Safety &amp; Stability &mdash; 14 metrics total</td>
+                <td>RoboEval Diagnostic Score: outcome (40%), safety &amp; stability (30%), efficiency (20%), and
+                  bimanual coordination (10%), from 14 metrics compared against human demonstrations</td>
               </tr>
               <tr>
                 <th>What you submit</th>
@@ -390,10 +391,14 @@
         <div class="column is-half">
           <h3 class="title is-5">Demonstration data</h3>
           <p>
-            Over 3,000 human demonstrations are provided, collected through VR teleoperation on an Oculus Quest and
-            through keyboard teleoperation. Each is stored as its reset seed and action trajectory; replaying it in
-            the simulator regenerates proprioception, RGB and depth from any camera, and the stage-level metrics, at
-            any control frequency and in any action mode. You may use all of it, a subset, or none of it.
+            Over 3,000 human demonstrations, collected through VR teleoperation on an Oculus Quest and through
+            keyboard teleoperation, are released as a ready-to-train LeRobot dataset,
+            <a href="https://huggingface.co/datasets/helen9975/roboeval_ee_delta_20hz_scaled" target="_blank"
+              rel="noopener"><code class="re-inline-code">roboeval_ee_delta_20hz_scaled</code></a>: 3,060 episodes
+            over all 30 variants at 20&nbsp;Hz, with end-effector delta actions, five 256&times;256 cameras,
+            proprioception, and a language instruction per episode. See
+            <a href="#training-data">Getting Started</a> to download and load it. You may use all of it, a subset,
+            or none of it.
           </p>
         </div>
         <div class="column is-half">
@@ -425,8 +430,11 @@
       </div>
 
       <p class="mb-5">
-        Submissions are ranked on four metric families. Each is reported per task, per variation, and aggregated
-        across the suite. Full definitions, units, and aggregation rules are in the
+        Submissions are ranked by the <strong>RoboEval Diagnostic Score</strong>, which combines four metric
+        families: outcome 40%, safety &amp; stability 30%, efficiency 20%, and bimanual coordination 10%. Behavior is
+        scored against human demonstrations of the same task and counts in proportion to how often the policy
+        succeeds, so a policy that does nothing scores 0. The evaluator prints your score. The formula is in
+        <a href="./challenge-rules.html#ranking">Ranking</a> and the metric definitions are in the
         <a href="./challenge-rules.html#metrics">Metrics Reference</a>.
       </p>
 
@@ -540,9 +548,33 @@ obs, reward, terminated, truncated, info = env.step(np.zeros(env.action_space.sh
 print(obs.keys(), info["subtask_progress"])</code></pre>
             </li>
             <li>
-              <strong>Train your policy</strong>
-              Use the provided demonstrations, your own data, or any pretraining you like. See the
-              <a href="./challenge-rules.html#rules">rules</a> for what is and is not permitted.
+              <strong id="training-data">Get the training data and train</strong>
+              The demonstrations are a LeRobot (v3.0) dataset with one sub-dataset per task variant. The
+              position + orientation variants that are evaluated total about 31&nbsp;GB; all 30 variants are about
+              102&nbsp;GB. Current <code class="re-inline-code">lerobot</code> needs NumPy&nbsp;2 while RoboEval pins
+              NumPy&nbsp;1.26, so train in a separate environment from the one you evaluate in.
+              <pre class="re-code"><code>python3.11 -m venv train-env &amp;&amp; . train-env/bin/activate
+pip install lerobot "huggingface_hub[hf_transfer]"
+
+# the 8 evaluated variants (~31 GB); drop --include for all 30 (~102 GB)
+hf download helen9975/roboeval_ee_delta_20hz_scaled --repo-type dataset \
+    --include "*PositionAndOrientation/*" --local-dir roboeval_data</code></pre>
+              <pre class="re-code"><code>from lerobot.datasets.lerobot_dataset import LeRobotDataset
+
+ds = LeRobotDataset("LiftPotPositionAndOrientation",
+                    root="roboeval_data/LiftPotPositionAndOrientation", revision="local")
+frame = ds[0]   # cam_head, cam_front, cam_external, cam_left_wrist, cam_right_wrist,
+                # state (36), state_gripper (2), actions (14), task (instruction)</code></pre>
+              <p class="is-size-7 has-text-grey mt-2">
+                The dataset matches the template submission's interface (end-effector delta actions at 20&nbsp;Hz). At
+                evaluation time your policy receives <code class="re-inline-code">rgb_&lt;camera&gt;</code> images
+                (3&times;H&times;W, uint8) for the cameras you declare,
+                <code class="re-inline-code">proprioception</code> (the dataset's <code class="re-inline-code">state</code>),
+                <code class="re-inline-code">proprioception_grippers</code> (<code class="re-inline-code">state_gripper</code>),
+                and the task's instruction. Train with any framework (for example LeRobot's policies or openpi), on
+                these demonstrations, your own data, or any pretraining; see the
+                <a href="./challenge-rules.html#rules">rules</a> for what is and is not permitted.
+              </p>
             </li>
             <li>
               <strong>Run the evaluation</strong>
