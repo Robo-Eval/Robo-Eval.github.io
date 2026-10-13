@@ -179,10 +179,10 @@
               <pre class="re-code"><code>python -m roboeval.challenge.evaluate --submission ~/submission --workers 16 --gpus 0,1</code></pre>
               <p class="is-size-7 has-text-grey mt-2">
                 For scale, measured with the template policy, which never finishes early (about 155k control steps
-                over the 8 tasks): proprioception-only took 7 minutes with 8 CPU workers, set by the longest task.
-                Each camera adds about 16&nbsp;ms per step and rendering saturates the GPU, so with three cameras the
-                same run projects to about 1.5 hours on 4 H100s. Policies that succeed early or use fewer cameras take
-                less; your inference time adds to these figures.
+                over the 8 tasks): with its three cameras, the command above took 81 minutes on 2 H100s;
+                proprioception-only took 7 minutes with 8 CPU workers. The longest task sets the pace, since each
+                worker runs one task. Policies that succeed early or use fewer cameras take less; your inference time
+                adds to these figures (a pi0.5 model served from one GPU took 42 minutes).
               </p>
             </li>
             <li>

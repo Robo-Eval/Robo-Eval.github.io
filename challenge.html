@@ -547,8 +547,9 @@ print(obs.keys(), info["subtask_progress"])</code></pre>
               position + orientation variants that are evaluated total about 31&nbsp;GB; all 30 variants are about
               102&nbsp;GB. Current <code class="re-inline-code">lerobot</code> needs NumPy&nbsp;2 while RoboEval pins
               NumPy&nbsp;1.26, so train in a separate environment from the one you evaluate in.
-              <pre class="re-code"><code>python3.11 -m venv train-env &amp;&amp; . train-env/bin/activate
-pip install lerobot "huggingface_hub[hf_transfer]"
+              <pre class="re-code"><code>conda create -n roboeval-train python=3.11 -y
+conda activate roboeval-train
+pip install lerobot huggingface_hub
 
 # the 8 evaluated variants (~31 GB); drop --include for all 30 (~102 GB)
 hf download helen9975/roboeval_ee_delta_20hz_scaled --repo-type dataset \
