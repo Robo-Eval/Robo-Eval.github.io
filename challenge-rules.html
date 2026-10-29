@@ -416,6 +416,9 @@
             <li>Any pretraining, including on external robotics datasets and internet-scale corpora.</li>
             <li>Collecting additional demonstrations yourself with the provided teleoperation tools.</li>
             <li>Data augmentation, synthetic data generation, and domain randomization during training.</li>
+            <li>Using simulator state offline to generate, label, or filter training data &mdash; for example scripted
+              experts that read object poses, or training rewards computed from success and stage signals. Only the
+              evaluated policy is restricted to its declared observations; describe such data in your report.</li>
             <li>Task-conditioned or per-task models, provided the same submission covers all 8 tasks.</li>
             <li>Test-time compute such as sampling and reranking, declared in
               <code class="re-inline-code">metadata.yaml</code>. Evaluation is not real-time, so inference speed does
@@ -424,12 +427,13 @@
 
           <h3 class="title is-5 mt-5">What is not allowed</h3>
           <ul>
-            <li><strong>Reading privileged simulator state</strong> that is not exposed through the standard
-              observation interface &mdash; ground-truth object poses in an image-only submission, contact flags,
+            <li><strong>Reading privileged simulator state during evaluation</strong> that is not exposed through the
+              standard observation interface &mdash; ground-truth object poses in an image-only submission, contact flags,
               or internal solver state.</li>
             <li><strong>Modifying the environment, task definition, reward, or termination conditions.</strong> The
               challenge release tag is the reference; local edits to it invalidate a submission. The evaluator records
-              a fingerprint of the benchmark source, and validation rejects a modified tree.</li>
+              a fingerprint of the benchmark source, and validation rejects a modified tree. Rewards you compute in
+              your own training code are up to you.</li>
             <li><strong>Tuning on the published evaluation seeds.</strong> Use them to sanity-check, not to select
               checkpoints or hyperparameters.</li>
             <li><strong>Hard-coding trajectories keyed to specific initial states</strong> rather than learning or
